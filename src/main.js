@@ -1,12 +1,16 @@
 import { render } from './render.js'
-import FilterView from './view/filter-view.js';
-import SortView from './view/sort-view.js';
+import { FilterView, SortView } from './view';
+import { ListPresenter } from './presenter'
 
 const pageHeaderElement = document.querySelector('.page-header');
 const pageMainElement = document.querySelector('.page-main');
 
 const pageFilterElement = pageHeaderElement.querySelector('.trip-controls__filters');
-const pageSortingElement = pageMainElement.querySelector('.trip-events');
+const pageContentElement = pageMainElement.querySelector('.trip-events');
+
+const listPresenter = new ListPresenter();
 
 render(new FilterView(), pageFilterElement);
-render(new SortView(), pageSortingElement);
+render(new SortView(), pageContentElement);
+
+listPresenter.init(pageContentElement);

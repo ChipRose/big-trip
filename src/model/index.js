@@ -1,0 +1,1 @@
+export { default as PointsModel } from "./points-model.js";

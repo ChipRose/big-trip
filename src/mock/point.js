@@ -1,4 +1,4 @@
-import { getRandomInteger } from '../util/util'
+import { getRandomInteger, getRandomDate } from '../util/util'
 
 const generateDestination = () => {
   const destinations = [
@@ -47,13 +47,23 @@ const generatePointType = () => {
   return types[randomIndex];
 }
 
-export const generatePoint = () => ({
-  "base_price": getRandomInteger(2000, 5000),
-  "date_from": "2019-07-10T22:55:56.845Z",
-  "date_to": "2019-07-11T11:22:13.375Z",
+export const generatePoint = () => {
+  const date = getRandomDate();
+  return({
+  "basePrice": getRandomInteger(20, 100),
+  "dateFrom": date.dateFrom,
+  "dateTo": date.dateTo,
   "destination": generateDestination(),
   "id": "0",
-  "isFavorite": false,
+  "isFavorite": Boolean(getRandomInteger(0,1)),
   // "offers": $Array < Offer.id > $,
   "type": generatePointType()
 })
+}
+export const getOffer = () => {
+  return [{
+    "id": 1,
+    "title": "Upgrade to a business class",
+    "price": 120
+  }]
+}

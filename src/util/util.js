@@ -4,8 +4,11 @@ dayjs.extend(duration)
 
 
 const dateFormat = {
-  'date': 'D MMM',
-  'time': 'HH:mm',
+  DATE: 'D MMM',
+  TIME: 'HH:mm',
+  LONG_TIME: 'DD[D] HH[H] mm[M]',
+  MIDDLE_TIME: 'HH[H] mm[M]',
+  SHORT_TIME:'mm[M]'
 }
 
 // Функция из интернета по генерации случайного числа из диапазона
@@ -24,17 +27,17 @@ const getRandomDate = () => {
   return { dateFrom, dateTo }
 };
 
-const formatDate = (date) => dayjs(date).format(dateFormat.date);
-const formatTime = (date) => dayjs(date).format(dateFormat.time);
+const formatDate = (date) => dayjs(date).format(dateFormat.DATE);
+const formatTime = (date) => dayjs(date).format(dateFormat.TIME);
 
-const getDiffTime = ({ dateFrom, dateTo }) => {
+const getDurationTime = ({ dateFrom, dateTo }) => {
   const dateStart = dayjs(dateFrom);
   const dateEnd = dayjs(dateTo);
   const dayDuration = dayjs.duration(dateEnd.diff(dateStart));
   const days = dayDuration.get('days');
-  if (days) return dayDuration.format('DD[D] HH[H] mm[M]');
-  if (!days && dayDuration.get('hours')) return dayDuration.format('HH[H] mm[M]');
-  return dayDuration.format('mm[M]');
+  if (days) return dayDuration.format(dateFormat.LONG_TIME);
+  if (!days && dayDuration.get('hours')) return dayDuration.format(dateFormat.MIDDLE_TIME);
+  return dayDuration.format(dateFormat.SHORT_TIME);
 }
 
-export { getRandomInteger, formatDate, formatTime, getDiffTime, getRandomDate };
+export { getRandomInteger, formatDate, formatTime, getDurationTime, getRandomDate };

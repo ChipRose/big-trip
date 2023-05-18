@@ -7,41 +7,93 @@ const generateDestination = () => {
 
   const destinations = [
     {
-      "description": "Chamonix, is a beautiful city, a true asian pearl, with crowded streets.",
-      "name": "Chamonix",
-      "pictures": [
+      description: "Chamonix, is a beautiful city, a true asian pearl, with crowded streets.",
+      name: "Chamonix",
+      pictures: [
         {
-          "src": "http://picsum.photos/300/200?r=0.0762563005163317",
-          "description": "Chamonix parliament building"
-        }
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Chamonix parliament building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Chamonix parliament building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Chamonix parliament building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Chamonix parliament building"
+        },
       ]
     },
     {
-      "description": "Geneva, is a beautiful city, a true asian pearl, with crowded streets.",
-      "name": "Geneva",
-      "pictures": [
+      description: "Geneva, is a beautiful city, a true asian pearl, with crowded streets.",
+      name: "Geneva",
+      pictures: [
         {
-          "src": "http://picsum.photos/300/200?r=8767.87766554433",
-          "description": "Geneva building"
-        }
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Geneva building"
+        },
       ]
     },
     {
-      "description": "Amsterdam, aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget.",
-      "name": "Amsterdam",
-      "pictures": [
+      description: "Amsterdam, aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget.  Nullam nunc ex, convallis sed finibus eget.  Nullam nunc ex, convallis sed finibus eget.",
+      name: "Amsterdam",
+      pictures: [
         {
-          "src": "http://picsum.photos/300/200?r=0.0775443486870954",
-          "description": "Amsterdam building"
-        }
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
+        {
+          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          description: "Amsterdam building"
+        },
       ]
     },
   ];
 
   const randomIndex = getRandomInteger(0, destinations.length - 1);
 
-  return isDestinationExist?destinations[randomIndex]:null;
-}
+  return isDestinationExist ? destinations[randomIndex] : null;
+};
 
 const generatePointType = () => {
   const randomIndex = getRandomInteger(0, pointTypes.length - 1);
@@ -49,23 +101,24 @@ const generatePointType = () => {
   return pointTypes[randomIndex];
 }
 
-const getOffersByType = (pointType) => {
+export const getOffersByType = (pointType) => {
   const offersByType = [
-    { type: pointTypes[0], offers: [1] },
-    { type: pointTypes[1], offers: [1, 2] },
+    { type: pointTypes[0], offers: [1, 4, 3, 5] },
+    { type: pointTypes[1], offers: [1, 2, 4] },
     { type: pointTypes[2], offers: null },
     { type: pointTypes[3], offers: [3] },
     { type: pointTypes[4], offers: null },
     { type: pointTypes[5], offers: [4, 1] },
     { type: pointTypes[6], offers: [2, 3] },
     { type: pointTypes[7], offers: null },
-    { type: pointTypes[8], offers: [5] },
+    { type: pointTypes[8], offers: [5, 6, 7] },
   ];
   const { offers } = offersByType.filter(({ type }) => type === pointType)[0] || '';
   return offers ? offers : null;
-}
+};
 
-const getOffer = (offersIdList) => {
+export const getOffersList = (pointType) => {
+  const offersIdList = getOffersByType(pointType)
   const offers = [
     {
       "id": 1,
@@ -79,7 +132,7 @@ const getOffer = (offersIdList) => {
     },
     {
       "id": 3,
-      "title": "Switch to comfort",
+      "title": "Switch to comfort class",
       "price": 100
     },
     {
@@ -92,14 +145,31 @@ const getOffer = (offersIdList) => {
       "title": "Add breakfast",
       "price": 50
     },
+    {
+      "id": 6,
+      "title": "Add meal",
+      "price": 15
+    },
+    {
+      "id": 7,
+      "title": "Choose seats",
+      "price": 5
+    },
+    {
+      "id": 8,
+      "title": "Travel by train",
+      "price": 40
+    },
+
   ];
 
   return offers.filter(({ id }) => offersIdList?.includes(id));
-}
+};
 
 export const generatePoint = () => {
   const date = getRandomDate();
   const type = generatePointType();
+  const availableOffers = getOffersByType(type);
   return ({
     "basePrice": getRandomInteger(20, 100),
     "dateFrom": date.dateFrom,
@@ -107,9 +177,9 @@ export const generatePoint = () => {
     "destination": generateDestination(),
     "id": "0",
     "isFavorite": Boolean(getRandomInteger(0, 1)),
-    "offers": getOffer(getOffersByType(type)),
+    "offers": availableOffers?.length ? Array.from({ length: getRandomInteger(0, 1) }, () => availableOffers[getRandomInteger(0, availableOffers?.length - 1)]) : [],
     "type": type
   });
-}
+};
 
 

@@ -27,7 +27,7 @@ const createOffersListTemplate = (point) => {
       `<ul class="event__selected-offers">
         ${offers.map(({ title, price }) => `
           <li class="event__offer">
-            <span class="event__offer-title">${title}</span>&plus;&euro;&nbsp;<span class="event__offer-price">${price}</span>
+            <span class="event__offer-title">${title}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${price}</span>
           </li>
         `).join('')}
       </ul>`
@@ -37,7 +37,6 @@ const createOffersListTemplate = (point) => {
 
 const createPointTemplate = (point) => {
   const { dateFrom, type, destination, basePrice, isFavorite } = point;
-  console.log('point', point)
 
   const dateStart = formatDate(dateFrom);
   const title = `${type}${destination ? ` ${destination.name}` : ''}`;
@@ -48,7 +47,7 @@ const createPointTemplate = (point) => {
       <div class="event">
         <time class="event__date" datetime=${dateFrom}">${dateStart}</time>
         <div class="event__type">
-          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
+          <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
         <h3 class="event__title">${title}</h3>
         ${createScheduleTemplate(point)}

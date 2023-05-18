@@ -10,9 +10,9 @@ export default class ListPresenter {
     this.listPoints = [...this.pointsModel.getPoint()];
 
     render(this.listComponent, this.listContainer);
-    render(new EditPointView(), this.listComponent.getElement());
+    render(new EditPointView(this.listPoints[0]), this.listComponent.getElement());
 
-    for (let i = 0; i < this.listPoints.length; i++) {
+    for (let i = 1; i < this.listPoints.length; i++) {
       render(new PointView(this.listPoints[i]), this.listComponent.getElement());
     }
   }

@@ -2,7 +2,7 @@ import { createElement } from '../render.js';
 import { formatDate, formatTime, getDurationTime } from '../util/util.js';
 import { getCheckedOffersList } from '../mock/point.js';
 
-const createScheduleTemplate = (point) => {
+const createScheduleBlock = (point) => {
   const { dateFrom, dateTo } = point;
   const timeStart = formatTime(dateFrom);
   const timeEnd = formatTime(dateTo);
@@ -20,7 +20,7 @@ const createScheduleTemplate = (point) => {
   )
 };
 
-const createOffersListTemplate = (point) => {
+const createOffersListBlock = (point) => {
   const { offers } = point;
   const checkedOffers = getCheckedOffersList(offers);
 
@@ -44,20 +44,20 @@ const createPointTemplate = (point) => {
   const title = `${type}${destination ? ` ${destination.name}` : ''}`;
   const favoriteClassActive = isFavorite ? 'event__favorite-btn--active' : '';
 
-  return (
-    `<li class="trip-events__item">
+  return (`
+    <li class="trip-events__item">
       <div class="event">
         <time class="event__date" datetime=${dateFrom}">${dateStart}</time>
         <div class="event__type">
           <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="${type} icon">
         </div>
         <h3 class="event__title">${title}</h3>
-        ${createScheduleTemplate(point)}
+        ${createScheduleBlock(point)}
         <p class="event__price">
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        ${createOffersListTemplate(point)}
+        ${createOffersListBlock(point)}
         <button class="event__favorite-btn ${favoriteClassActive}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -68,8 +68,8 @@ const createPointTemplate = (point) => {
           <span class="visually-hidden">Open event</span>
         </button>
       </div>
-    </li>`
-  );
+    </li>
+  `);
 };
 
 export default class PointView {

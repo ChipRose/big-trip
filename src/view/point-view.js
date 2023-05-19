@@ -1,5 +1,6 @@
 import { createElement } from '../render.js';
 import { formatDate, formatTime, getDurationTime } from '../util/util.js';
+import { getCheckedOffersList } from '../mock/point.js';
 
 const createScheduleTemplate = (point) => {
   const { dateFrom, dateTo } = point;
@@ -21,13 +22,14 @@ const createScheduleTemplate = (point) => {
 
 const createOffersListTemplate = (point) => {
   const { offers } = point;
+  const checkedOffers = getCheckedOffersList(offers);
 
   return (
-    offers?.length ?
+    checkedOffers?.length ?
       `<ul class="event__selected-offers">
-        ${offers.map(({ title, price }) => `
+        ${checkedOffers.map(({ title, price }) => `
           <li class="event__offer">
-            <span class="event__offer-title">${title}</span> &plus;&euro;&nbsp;<span class="event__offer-price">${price}</span>
+            <span class="event__offer-title">${title}</span> &plus;&nbsp;&euro;&nbsp;<span class="event__offer-price">${price}</span>
           </li>
         `).join('')}
       </ul>`

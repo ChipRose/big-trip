@@ -1,5 +1,5 @@
 import { createElement } from '../render.js';
-import { getOffersList } from '../mock/point.js';
+import { getAvailableOffersListByType } from '../mock/point.js';
 import { isItemChecked, formatDateTime } from '../util/util.js';
 
 const createTimeFieldTemplate = (point) => {
@@ -20,7 +20,7 @@ const createTimeFieldTemplate = (point) => {
 
 const createAvailableOffersSectionTemplate = (point) => {
   const { type, offers } = point;
-  const availableOffersList = getOffersList(type);
+  const availableOffersList = getAvailableOffersListByType(type);
 
   return (
     availableOffersList?.length ?
@@ -66,6 +66,7 @@ const createDistinationSectionTemplate = (point) => {
 };
 
 const createEditPointTemplate = (point) => {
+  const {type} = point;
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
@@ -73,7 +74,7 @@ const createEditPointTemplate = (point) => {
           <div class="event__type-wrapper">
             <label class="event__type  event__type-btn" for="event-type-toggle-1">
               <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/flight.png" alt="Event type icon">
+              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} type icon">
             </label>
             <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
   
@@ -131,7 +132,7 @@ const createEditPointTemplate = (point) => {
   
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
-              Flight
+              ${type}
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
             <datalist id="destination-list-1">

@@ -1,6 +1,49 @@
 import { getRandomInteger, getRandomDate } from '../util/util'
 
 const pointTypes = ["taxi", "bus", "train", "ship", "drive", "flight", "check-in", "sightseeing", "restaurant"];
+const offers = [
+  {
+    "id": 1,
+    "title": "Upgrade to a business class",
+    "price": 120
+  },
+  {
+    "id": 2,
+    "title": "Lunch in city",
+    "price": 30
+  },
+  {
+    "id": 3,
+    "title": "Switch to comfort class",
+    "price": 100
+  },
+  {
+    "id": 4,
+    "title": "Add luggage",
+    "price": 30
+  },
+  {
+    "id": 5,
+    "title": "Add breakfast",
+    "price": 50
+  },
+  {
+    "id": 6,
+    "title": "Add meal",
+    "price": 15
+  },
+  {
+    "id": 7,
+    "title": "Choose seats",
+    "price": 5
+  },
+  {
+    "id": 8,
+    "title": "Travel by train",
+    "price": 40
+  },
+
+];
 
 const generateDestination = () => {
   const isDestinationExist = Boolean(getRandomInteger(0, 1));
@@ -101,7 +144,7 @@ const generatePointType = () => {
   return pointTypes[randomIndex];
 }
 
-export const getOffersByType = (pointType) => {
+export const getAvailableOffersIdByType = (pointType) => {
   const offersByType = [
     { type: pointTypes[0], offers: [1, 4, 3, 5] },
     { type: pointTypes[1], offers: [1, 2, 4] },
@@ -117,59 +160,20 @@ export const getOffersByType = (pointType) => {
   return offers ? offers : null;
 };
 
-export const getOffersList = (pointType) => {
-  const offersIdList = getOffersByType(pointType)
-  const offers = [
-    {
-      "id": 1,
-      "title": "Upgrade to a business class",
-      "price": 120
-    },
-    {
-      "id": 2,
-      "title": "Lunch in city",
-      "price": 30
-    },
-    {
-      "id": 3,
-      "title": "Switch to comfort class",
-      "price": 100
-    },
-    {
-      "id": 4,
-      "title": "Add luggage",
-      "price": 30
-    },
-    {
-      "id": 5,
-      "title": "Add breakfast",
-      "price": 50
-    },
-    {
-      "id": 6,
-      "title": "Add meal",
-      "price": 15
-    },
-    {
-      "id": 7,
-      "title": "Choose seats",
-      "price": 5
-    },
-    {
-      "id": 8,
-      "title": "Travel by train",
-      "price": 40
-    },
-
-  ];
+export const getAvailableOffersListByType = (pointType) => {
+  const offersIdList = getAvailableOffersIdByType(pointType);
 
   return offers.filter(({ id }) => offersIdList?.includes(id));
+};
+
+export const getCheckedOffersList = (checkedOffers) => {
+  return offers.filter(({ id }) => checkedOffers?.includes(id));
 };
 
 export const generatePoint = () => {
   const date = getRandomDate();
   const type = generatePointType();
-  const availableOffers = getOffersByType(type);
+  const availableOffers = getAvailableOffersIdByType(type);
   return ({
     "basePrice": getRandomInteger(20, 100),
     "dateFrom": date.dateFrom,

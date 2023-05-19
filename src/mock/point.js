@@ -175,14 +175,14 @@ export const generatePoint = () => {
   const type = generatePointType();
   const availableOffers = getAvailableOffersIdByType(type);
   return ({
-    "basePrice": getRandomInteger(20, 100),
-    "dateFrom": date.dateFrom,
-    "dateTo": date.dateTo,
-    "destination": generateDestination(),
-    "id": "0",
-    "isFavorite": Boolean(getRandomInteger(0, 1)),
-    "offers": availableOffers?.length ? Array.from({ length: getRandomInteger(0, 1) }, () => availableOffers[getRandomInteger(0, availableOffers?.length - 1)]) : [],
-    "type": type
+    basePrice: getRandomInteger(20, 100),
+    dateFrom: date.dateFrom,
+    dateTo: date.dateTo,
+    destination: generateDestination(),
+    id: "0",
+    isFavorite: Boolean(getRandomInteger(0, 1)),
+    offers: availableOffers?.length ? Array.from({ length: getRandomInteger(0, 1) }, () => availableOffers[getRandomInteger(0, availableOffers?.length - 1)]) : [],
+    type: type
   });
 };
 

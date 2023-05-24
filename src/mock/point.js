@@ -156,8 +156,8 @@ export const getAvailableOffersIdByType = (pointType) => {
     { type: pointTypes[7], offers: null },
     { type: pointTypes[8], offers: [5, 6, 7] },
   ];
-  const { offers } = offersByType.filter(({ type }) => type === pointType)[0] || '';
-  return offers ? offers : null;
+  const { offers } = offersByType.find(({ type }) => type === pointType) || [];
+  return offers?.length ? offers : null;
 };
 
 export const getAvailableOffersListByType = (pointType) => {

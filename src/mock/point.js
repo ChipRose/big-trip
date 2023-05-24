@@ -174,6 +174,8 @@ export const generatePoint = () => {
   const date = getRandomDate();
   const type = generatePointType();
   const availableOffers = getAvailableOffersIdByType(type);
+  const checkedOffers = Array.from({ length: getRandomInteger(0, availableOffers?.length-1) }, () => availableOffers[getRandomInteger(0, availableOffers?.length - 1)])
+  const offersSet = Array.from(new Set(checkedOffers));
   return ({
     basePrice: getRandomInteger(20, 100),
     dateFrom: date.dateFrom,
@@ -181,7 +183,7 @@ export const generatePoint = () => {
     destination: generateDestination(),
     id: "0",
     isFavorite: Boolean(getRandomInteger(0, 1)),
-    offers: availableOffers?.length ? Array.from({ length: getRandomInteger(0, 1) }, () => availableOffers[getRandomInteger(0, availableOffers?.length - 1)]) : [],
+    offers: availableOffers?.length ? offersSet : [],
     type: type
   });
 };

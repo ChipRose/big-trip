@@ -54,19 +54,19 @@ const generateDestination = () => {
       name: "Chamonix",
       pictures: [
         {
-          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          src: `http://placeimg.com/300/200/nature`,
           description: "Chamonix parliament building"
         },
         {
-          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          src: `http://placeimg.com/300/200/nature`,
           description: "Chamonix parliament building"
         },
         {
-          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          src: `http://placeimg.com/300/200/nature`,
           description: "Chamonix parliament building"
         },
         {
-          src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+          src: `http://placeimg.com/300/200/nature`,
           description: "Chamonix parliament building"
         },
       ]

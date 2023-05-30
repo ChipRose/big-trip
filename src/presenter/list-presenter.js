@@ -1,4 +1,4 @@
-import { ListView, EditPointView, PointView } from '../view';
+import { ListView, EditPointView, PointView, ListEmpty, SortView } from '../view';
 import { render } from '../render';
 
 export default class ListPresenter {
@@ -9,12 +9,27 @@ export default class ListPresenter {
 
   #listPoints = [];
 
-  init = (listContainer, pointsModel) => {
+  constructor(listContainer, pointsModel) {
     this.#listContainer = listContainer;
     this.#pointsModel = pointsModel;
-    this.#listPoints = [...this.#pointsModel.points];
+  }
 
+  init = () => {
+    // this.#listContainer = listContainer;
+    // this.#pointsModel = pointsModel;
+    this.#listPoints = [...this.#pointsModel.points];
+    this.#renderList();
+  }
+
+  #renderList = () => {
     render(this.#listComponent, this.#listContainer);
+
+    if (!this.#listPoints?.length) {
+      render(new ListEmpty(), this.#listContainer);
+    } else {
+      render(new SortView(), this.#listContainer);
+      render(this.#listComponent, this.#listContainer);
+    }
 
     for (let i = 0; i < this.#listPoints.length; i++) {
       this.#renderPoint(this.#listPoints[i]);

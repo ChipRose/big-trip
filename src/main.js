@@ -1,5 +1,5 @@
 import { render } from './render.js'
-import { FilterView, SortView } from './view';
+import { FilterView } from './view';
 import { ListPresenter } from './presenter';
 import { PointsModel } from './model';
 
@@ -10,9 +10,8 @@ const pageFilterElement = pageHeaderElement.querySelector('.trip-controls__filte
 const pageContentElement = pageMainElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
-const listPresenter = new ListPresenter();
+const listPresenter = new ListPresenter(pageContentElement, pointsModel);
 
 render(new FilterView(), pageFilterElement);
-render(new SortView(), pageContentElement);
 
 listPresenter.init(pageContentElement, pointsModel);

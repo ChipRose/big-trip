@@ -8,6 +8,7 @@ export default class ListPresenter {
   #listComponent = new ListView();
 
   #listPoints = [];
+  #listOffersByType = [];
 
   constructor(listContainer, pointsModel) {
     this.#listContainer = listContainer;
@@ -15,9 +16,8 @@ export default class ListPresenter {
   }
 
   init = () => {
-    // this.#listContainer = listContainer;
-    // this.#pointsModel = pointsModel;
     this.#listPoints = [...this.#pointsModel.points];
+    this.#listOffersByType = [...this.#pointsModel.offersByType];
     this.#renderList();
   }
 
@@ -32,13 +32,13 @@ export default class ListPresenter {
     }
 
     for (let i = 0; i < this.#listPoints.length; i++) {
-      this.#renderPoint(this.#listPoints[i]);
+      this.#renderPoint({ point: this.#listPoints[i], offersByType: this.#listOffersByType[i] });
     }
   }
 
-  #renderPoint = (point) => {
+  #renderPoint = ({ point, offersByType }) => {
     const pointComponent = new PointView(point);
-    const pointEditComponent = new EditPointView(point);
+    const pointEditComponent = new EditPointView({ point, offersByType });
 
     const replaceCardToForm = () => {
       this.#listComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);

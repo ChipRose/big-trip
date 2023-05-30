@@ -63,15 +63,13 @@ const createTimeFieldBlock = ({ dateFrom, dateTo }) => {
   `);
 };
 
-const createAvailableOffersSectionBlock = ({ type, offers }) => {
-  const availableOffersList = getAvailableOffersListByType(type);
-
+const createAvailableOffersSectionBlock = ({ offersByType, offers }) => {
   return (
-    availableOffersList?.length ?
+    offersByType?.length ?
       `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
-          ${availableOffersList.map(({ title, price, id }) => (`
+          ${offersByType.map(({ title, price, id }) => (`
             <div class="event__offer-selector">
               <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isItemChecked({ id, list: offers })}>
               <label class="event__offer-label" for="event-offer-luggage-1">
@@ -108,7 +106,7 @@ const createDistinationSectionBlock = ({ destination }) => {
   );
 };
 
-const createEditPointTemplate = (point = {}) => {
+const createEditPointTemplate = ({ point = {}, offersByType = [] }) => {
   const {
     basePrice = 0,
     dateFrom = '0000-00-00T00:00:00.000Z',
@@ -157,7 +155,7 @@ const createEditPointTemplate = (point = {}) => {
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          ${createAvailableOffersSectionBlock({ type, offers })}
+          ${createAvailableOffersSectionBlock({ offersByType, offers })}
           ${createDistinationSectionBlock({ destination })}
         </section>
       </form>
@@ -168,12 +166,14 @@ const createEditPointTemplate = (point = {}) => {
 export default class EditPointView {
   #element = null;
   #point = null;
+  #offersByType = null;
 
-  constructor(point) {
+  constructor({ point, offersByType }) {
     this.#point = point;
+    this.#offersByType = offersByType;
   }
   get template() {
-    return createEditPointTemplate(this.#point);
+    return createEditPointTemplate({ point: this.#point, offersByType: this.#offersByType });
   }
 
   get element() {

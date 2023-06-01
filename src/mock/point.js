@@ -1,49 +1,8 @@
 import { getRandomInteger, getRandomDate } from '../util/util'
+import { getAvailableOffersIdByType } from '../model/offers-model';
 
 const pointTypes = ["taxi", "bus", "train", "ship", "drive", "flight", "check-in", "sightseeing", "restaurant"];
-const offers = [
-  {
-    "id": 1,
-    "title": "Upgrade to a business class",
-    "price": 120
-  },
-  {
-    "id": 2,
-    "title": "Lunch in city",
-    "price": 30
-  },
-  {
-    "id": 3,
-    "title": "Switch to comfort class",
-    "price": 100
-  },
-  {
-    "id": 4,
-    "title": "Add luggage",
-    "price": 30
-  },
-  {
-    "id": 5,
-    "title": "Add breakfast",
-    "price": 50
-  },
-  {
-    "id": 6,
-    "title": "Add meal",
-    "price": 15
-  },
-  {
-    "id": 7,
-    "title": "Choose seats",
-    "price": 5
-  },
-  {
-    "id": 8,
-    "title": "Travel by train",
-    "price": 40
-  },
 
-];
 
 const generateDestination = () => {
   const isDestinationExist = Boolean(getRandomInteger(0, 1));
@@ -142,32 +101,6 @@ const generatePointType = () => {
   const randomIndex = getRandomInteger(0, pointTypes.length - 1);
 
   return pointTypes[randomIndex];
-}
-
-export const getAvailableOffersIdByType = (pointType) => {
-  const offersByType = [
-    { type: pointTypes[0], offers: [1, 4, 3, 5] },
-    { type: pointTypes[1], offers: [1, 2, 4] },
-    { type: pointTypes[2], offers: null },
-    { type: pointTypes[3], offers: [3] },
-    { type: pointTypes[4], offers: null },
-    { type: pointTypes[5], offers: [4, 1] },
-    { type: pointTypes[6], offers: [2, 3] },
-    { type: pointTypes[7], offers: null },
-    { type: pointTypes[8], offers: [5, 6, 7] },
-  ];
-  const { offers } = offersByType.find(({ type }) => type === pointType) || [];
-  return offers?.length ? offers : null;
-};
-
-export const getAvailableOffersListByType = (pointType) => {
-  const offersIdList = getAvailableOffersIdByType(pointType);
-
-  return offers.filter(({ id }) => offersIdList?.includes(id));
-};
-
-export const getCheckedOffersList = (checkedOffers) => {
-  return offers.filter(({ id }) => checkedOffers?.includes(id));
 };
 
 export const generatePoint = () => {

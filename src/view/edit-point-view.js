@@ -1,5 +1,4 @@
 import { createElement } from '../render.js';
-import { getAvailableOffersListByType } from '../mock/point.js';
 import { isItemChecked, formatDateTime } from '../util/util.js';
 
 const createEventChooseBlock = () => {
@@ -46,7 +45,7 @@ const createEventChooseBlock = () => {
       </fieldset>
     </div>
   `)
-}
+};
 
 const createTimeFieldBlock = ({ dateFrom, dateTo }) => {
   const dateEnd = formatDateTime(dateTo);
@@ -63,15 +62,18 @@ const createTimeFieldBlock = ({ dateFrom, dateTo }) => {
   `);
 };
 
-const createAvailableOffersSectionBlock = ({ offersByType, offers }) => {
+const createAvailableOffersSectionBlock = ({ offersModel }) => {
+  const availableOffers = offersModel.offersAvailable;
+  const checkedOffers = offersModel.offersChecked;
+
   return (
-    offersByType?.length ?
+    availableOffers?.length ?
       `<section class="event__section  event__section--offers">
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
-          ${offersByType.map(({ title, price, id }) => (`
+          ${availableOffers.map(({ title, price, id }) => (`
             <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isItemChecked({ id, list: offers })}>
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isItemChecked({ id, list: checkedOffers })}>
               <label class="event__offer-label" for="event-offer-luggage-1">
                 <span class="event__offer-title">${title}</span>
                 &plus;&euro;&nbsp;
@@ -106,7 +108,7 @@ const createDistinationSectionBlock = ({ destination }) => {
   );
 };
 
-const createEditPointTemplate = ({ point = {}, offersByType = [] }) => {
+const createEditPointTemplate = ({ point = {}, offersModel = null }) => {
   const {
     basePrice = 0,
     dateFrom = '0000-00-00T00:00:00.000Z',
@@ -155,7 +157,7 @@ const createEditPointTemplate = ({ point = {}, offersByType = [] }) => {
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          ${createAvailableOffersSectionBlock({ offersByType, offers })}
+          ${createAvailableOffersSectionBlock({ offersModel, offers })}
           ${createDistinationSectionBlock({ destination })}
         </section>
       </form>
@@ -166,14 +168,15 @@ const createEditPointTemplate = ({ point = {}, offersByType = [] }) => {
 export default class EditPointView {
   #element = null;
   #point = null;
-  #offersByType = null;
+  #offersModel = null;
 
-  constructor({ point, offersByType }) {
+  constructor({ point, offersModel }) {
     this.#point = point;
-    this.#offersByType = offersByType;
+    this.#offersModel = offersModel;
   }
+
   get template() {
-    return createEditPointTemplate({ point: this.#point, offersByType: this.#offersByType });
+    return createEditPointTemplate({ point: this.#point, offersModel: this.#offersModel });
   }
 
   get element() {

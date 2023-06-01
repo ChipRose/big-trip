@@ -1,4 +1,5 @@
 import { ListView, EditPointView, PointView, ListEmpty, SortView } from '../view';
+import { OffersModel } from '../model';
 import { render } from '../render';
 
 export default class ListPresenter {
@@ -17,7 +18,6 @@ export default class ListPresenter {
 
   init = () => {
     this.#listPoints = [...this.#pointsModel.points];
-    this.#listOffersByType = [...this.#pointsModel.offersByType];
     this.#renderList();
   }
 
@@ -36,9 +36,10 @@ export default class ListPresenter {
     }
   }
 
-  #renderPoint = ({ point, offersByType }) => {
-    const pointComponent = new PointView(point);
-    const pointEditComponent = new EditPointView({ point, offersByType });
+  #renderPoint = ({ point }) => {
+    const offersModel = new OffersModel({ pointType: point.type, offersChecked: point.offers });
+    const pointComponent = new PointView({point, offersModel});
+    const pointEditComponent = new EditPointView({ point, offersModel });
 
     const replaceCardToForm = () => {
       this.#listComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);

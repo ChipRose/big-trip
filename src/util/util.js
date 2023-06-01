@@ -42,6 +42,6 @@ export const getDurationTime = ({ dateFrom, dateTo }) => {
   return dayDuration.format(dateFormat.SHORT_TIME);
 };
 
-export const isItemChecked = ({ id, list }) => {
-  return list.includes(id) ? 'checked' : '';
+export const isItemChecked = ({ id: _id, list }) => {
+  return list?.find(({ id }) => id === _id) ? 'checked' : '';
 };

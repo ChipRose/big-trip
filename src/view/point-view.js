@@ -1,6 +1,5 @@
 import { createElement } from '../render.js';
 import { formatDate, formatTime, getDurationTime } from '../util/util.js';
-import { getCheckedOffersList } from '../mock/point.js';
 
 const createScheduleBlock = (point) => {
   const { dateFrom, dateTo } = point;
@@ -20,9 +19,8 @@ const createScheduleBlock = (point) => {
   )
 };
 
-const createOffersListBlock = (point) => {
-  const { offers } = point;
-  const checkedOffers = getCheckedOffersList(offers);
+const createOffersListBlock = (offersModel = null) => {
+  const checkedOffers = offersModel.offersChecked;
 
   return (
     checkedOffers?.length ?
@@ -37,7 +35,7 @@ const createOffersListBlock = (point) => {
   )
 };
 
-const createPointTemplate = (point) => {
+const createPointTemplate = ({ point = {}, offersModel = null }) => {
   const { dateFrom, type, destination, basePrice, isFavorite } = point;
 
   const dateStart = formatDate(dateFrom);
@@ -57,7 +55,7 @@ const createPointTemplate = (point) => {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        ${createOffersListBlock(point)}
+        ${createOffersListBlock(offersModel)}
         <button class="event__favorite-btn ${favoriteClassActive}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -75,13 +73,15 @@ const createPointTemplate = (point) => {
 export default class PointView {
   #element = null;
   #point = null;
+  #offersModel = null;
 
-  constructor(point) {
+  constructor({ point, offersModel }) {
     this.#point = point;
+    this.#offersModel = offersModel;
   }
 
   get template() {
-    return createPointTemplate(this.#point);
+    return createPointTemplate({ point: this.#point, offersModel: this.#offersModel });
   }
 
   get element() {

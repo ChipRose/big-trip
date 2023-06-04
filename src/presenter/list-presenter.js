@@ -38,7 +38,7 @@ export default class ListPresenter {
 
   #renderPoint = ({ point }) => {
     const offersModel = new OffersModel({ pointType: point.type, offersChecked: point.offers });
-    const pointComponent = new PointView({point, offersModel});
+    const pointComponent = new PointView({ point, offersModel });
     const pointEditComponent = new EditPointView({ point, offersModel });
 
     const replaceCardToForm = () => {

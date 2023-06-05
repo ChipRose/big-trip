@@ -1,4 +1,4 @@
-import { createElement } from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createListEmptyTemplate = () => {
   return (`
@@ -6,28 +6,15 @@ const createListEmptyTemplate = () => {
   `);
 };
 
-  // <!--
-  //   Значение отображаемого текста зависит от выбранного фильтра:
-  //     * Everthing – 'Click New Event to create your first point'
-  //     * Past — 'There are no past events now';
-  //     * Future — 'There are no future events now'.
-  // -->
+// <!--
+//   Значение отображаемого текста зависит от выбранного фильтра:
+//     * Everthing – 'Click New Event to create your first point'
+//     * Past — 'There are no past events now';
+//     * Future — 'There are no future events now'.
+// -->
 
-export default class ListEmpty {
-  #element = null;
-
+export default class ListEmpty extends AbstractView {
   get template() {
     return createListEmptyTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

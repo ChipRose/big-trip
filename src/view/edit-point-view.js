@@ -1,68 +1,53 @@
-import { createElement } from '../render.js';
 import { isItemChecked, formatDateTime } from '../util/util.js';
+import AbstractView from '../framework/view/abstract-view.js';
+import { POINT_TYPES } from '../const/const.js';
+import { DESTINATIONS_LIST } from '../mock/point.js';
+
+const BLANK_POINT = {
+  id: "0",
+  basePrice: 0,
+  dateFrom: '0000-00-00T00:00:00.000Z',
+  dateTo: '0000-00-00T00:00:00.000Z',
+  destination: {},
+  offers: [],
+  type: 'drive',
+  isFavorite: false
+};
 
 const createEventChooseBlock = () => {
   return (`
     <div class="event__type-list">
       <fieldset class="event__type-group">
-        <legen class="visually-hidden">Event type</legen
-        <di class="event__type-item">
-          <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi">
-          <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus">
-          <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train">
-          <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship">
-          <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive">
-          <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" checked>
-          <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in">
-          <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
-        </di
-        <di class="event__type-item">
-          <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing">
-          <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
-        </di
-        <div class="event__type-item">
-          <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant">
-          <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
-        </div>
+        <legend class="visually-hidden">Event type</legend>
+        ${POINT_TYPES.map((type, index) => (`
+          <div class="event__type-item">
+            <input id="event-type-${type}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
+            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${index}">${type}</label>
+          </div>
+        `)).join('')}
       </fieldset>
     </div>
   `)
 };
 
-const createTimeFieldBlock = ({ dateFrom, dateTo }) => {
+const createTimeFieldBlock = (point) => {
+  const { dateFrom, dateTo, id } = point;
   const dateEnd = formatDateTime(dateTo);
   const dateStart = formatDateTime(dateFrom);
 
   return (`
     <div class="event__field-group  event__field-group--time">
-      <label class="visually-hidden" for="event-start-time-1">From</label>
-      <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value=${dateStart}>
+      <label class="visually-hidden" for="event-start-time-${id}">From</label>
+      <input class="event__input  event__input--time" id="event-start-time-${id}" type="text" name="event-start-time" value=${dateStart}>
       &mdash;
-      <label class="visually-hidden" for="event-end-time-1">To</label>
-      <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value=${dateEnd}>
+      <label class="visually-hidden" for="event-end-time-${id}">To</label>
+      <input class="event__input  event__input--time" id="event-end-time-${id}" type="text" name="event-end-time" value=${dateEnd}>
     </div>
   `);
 };
 
-const createAvailableOffersSectionBlock = ({ offersModel }) => {
+const createOffersBlock = ({ offersModel = null, point }) => {
+  const { type } = point;
   const availableOffers = offersModel.offersAvailable;
   const checkedOffers = offersModel.offersChecked;
 
@@ -72,9 +57,9 @@ const createAvailableOffersSectionBlock = ({ offersModel }) => {
         <h3 class="event__section-title  event__section-title--offers">Offers</h3>
         <div class="event__available-offers">
           ${availableOffers.map(({ title, price, id }) => (`
-            <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-luggage-1" type="checkbox" name="event-offer-luggage" ${isItemChecked({ id, list: checkedOffers })}>
-              <label class="event__offer-label" for="event-offer-luggage-1">
+              <div class="event__offer-selector">
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isItemChecked({ id, list: checkedOffers })}>
+              <label class="event__offer-label" for="event-offer-${type}-${id}">
                 <span class="event__offer-title">${title}</span>
                 &plus;&euro;&nbsp;
                 <span class="event__offer-price">${price}</span>
@@ -87,11 +72,11 @@ const createAvailableOffersSectionBlock = ({ offersModel }) => {
   );
 };
 
-const createDistinationSectionBlock = ({ destination }) => {
-  const { description = '', pictures } = destination || {};
+const createDistinationBlock = (point) => {
+  const { description = '', pictures = [] } = point.destination || {};
 
   return (
-    destination ?
+    point.destination ?
       `<section class="event__section  event__section--destination">
         <h3 class="event__section-title  event__section-title--destination">Destination</h3>
         <p class="event__destination-description">${description}</p>
@@ -108,14 +93,10 @@ const createDistinationSectionBlock = ({ destination }) => {
   );
 };
 
-const createEditPointTemplate = ({ point = {}, offersModel = null }) => {
+const createEditPointTemplate = ({ point = BLANK_POINT, offersModel = null }) => {
   const {
-    basePrice = 0,
-    dateFrom = '0000-00-00T00:00:00.000Z',
-    dateTo = '0000-00-00T00:00:00.000Z',
-    destination = {},
-    offers = [],
-    type = 'drive'
+    basePrice,
+    type,
   } = point;
 
   return (
@@ -137,13 +118,13 @@ const createEditPointTemplate = ({ point = {}, offersModel = null }) => {
             </label>
             <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
             <datalist id="destination-list-1">
-              <option value="Amsterdam"></option>
-              <option value="Geneva"></option>
-              <option value="Chamonix"></option>
+            ${DESTINATIONS_LIST.map((destination) => (`
+              <option value="${destination}"></option>
+            `)).join('')}
             </datalist>
           </div>
 
-          ${createTimeFieldBlock({ dateFrom, dateTo })}
+          ${createTimeFieldBlock(point)}
 
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
@@ -157,20 +138,20 @@ const createEditPointTemplate = ({ point = {}, offersModel = null }) => {
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          ${createAvailableOffersSectionBlock({ offersModel, offers })}
-          ${createDistinationSectionBlock({ destination })}
+          ${createOffersBlock({ offersModel, point })}
+          ${createDistinationBlock(point)}
         </section>
       </form>
     </li>`
   )
 };
 
-export default class EditPointView {
-  #element = null;
+export default class EditPointView extends AbstractView {
   #point = null;
   #offersModel = null;
 
   constructor({ point, offersModel }) {
+    super();
     this.#point = point;
     this.#offersModel = offersModel;
   }
@@ -179,14 +160,13 @@ export default class EditPointView {
     return createEditPointTemplate({ point: this.#point, offersModel: this.#offersModel });
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-    return this.#element;
+  setFormSubmitHandler = (callback) => {
+    this._callback.formSubmit = callback;
+    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   }
 
-  removeElement() {
-    this.#element = null;
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 }

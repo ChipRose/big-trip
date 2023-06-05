@@ -1,3 +1,5 @@
+import { getAvailableOffersIdByType } from '../mock/offers';
+
 const offers = [
   {
     "id": 1,
@@ -41,21 +43,6 @@ const offers = [
   },
 
 ];
-
-export const getAvailableOffersIdByType = (pointType) => {
-  const offersByType = {
-    "taxi": [1, 4, 3, 5],
-    "bus": [1, 2, 4],
-    "train": null,
-    "ship": [3],
-    "drive": null,
-    "flight": [4, 1],
-    "check-in": [2, 3],
-    "sightseeing": null,
-    "restaurant": [5, 6, 7],
-  };
-  return offersByType[pointType];
-};
 
 export default class OffersModel {
   #pointType = null;

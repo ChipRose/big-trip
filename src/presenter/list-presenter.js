@@ -1,6 +1,6 @@
 import { ListView, EditPointView, PointView, ListEmpty, SortView } from '../view';
 import { OffersModel } from '../model';
-import { render } from '../render';
+import { render } from '../framework/render.js';
 
 export default class ListPresenter {
   #listContainer = null;
@@ -57,13 +57,12 @@ export default class ListPresenter {
       }
     };
 
-    pointComponent.element.querySelector('.event__rollup-btn').addEventListener('click', () => {
+    pointComponent.setEditClickHandler(() => {
       replaceCardToForm();
       document.addEventListener('keydown', onEscKeyDown);
     });
 
-    pointEditComponent.element.querySelector('form').addEventListener('submit', (evt) => {
-      evt.preventDefault();
+    pointEditComponent.setFormSubmitHandler(() => {
       replaceFormToCard();
       document.removeEventListener('keydown', onEscKeyDown);
     });

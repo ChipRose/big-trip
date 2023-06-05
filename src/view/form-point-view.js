@@ -1,4 +1,4 @@
-import { isItemChecked, formatDateTime } from '../util/util.js';
+import { isItemChecked, formatDateTime } from '../util';
 import AbstractView from '../framework/view/abstract-view.js';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
@@ -93,7 +93,7 @@ const createDistinationBlock = (point) => {
   );
 };
 
-const createEditPointTemplate = ({ point = BLANK_POINT, offersModel = null }) => {
+const createFormPointTemplate = ({ point = BLANK_POINT, offersModel = null }) => {
   const {
     basePrice,
     type,
@@ -146,7 +146,7 @@ const createEditPointTemplate = ({ point = BLANK_POINT, offersModel = null }) =>
   )
 };
 
-export default class EditPointView extends AbstractView {
+export default class FormPointView extends AbstractView {
   #point = null;
   #offersModel = null;
 
@@ -157,7 +157,7 @@ export default class EditPointView extends AbstractView {
   }
 
   get template() {
-    return createEditPointTemplate({ point: this.#point, offersModel: this.#offersModel });
+    return createFormPointTemplate({ point: this.#point, offersModel: this.#offersModel });
   }
 
   setFormSubmitHandler = (callback) => {

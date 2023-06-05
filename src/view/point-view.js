@@ -1,4 +1,4 @@
-import { formatDate, formatTime, getDurationTime } from '../util/util.js';
+import { formatDate, formatTime, getDurationTime } from '../util';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createScheduleBlock = (point) => {

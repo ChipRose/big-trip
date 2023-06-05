@@ -1,6 +1,6 @@
-import { getRandomInteger, getRandomDate } from '../util/util'
-import { getCheckedOffersIdByType } from '../mock/offers';
-import { POINT_TYPES } from '../const/const';
+import { getRandomInteger, getRandomDate } from '../util';
+import { getCheckedOffersIdByType } from '../mock/offers.js';
+import { POINT_TYPES } from '../const/const.js';
 
 const destinations = [
   {
@@ -30,27 +30,27 @@ const destinations = [
     name: "Geneva",
     pictures: [
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Geneva building"
       },
     ]
@@ -60,27 +60,27 @@ const destinations = [
     name: "Amsterdam",
     pictures: [
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
       {
-        src: `https://picsum.photos/id/${getRandomInteger(1, 100)}/300/200`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Amsterdam building"
       },
     ]
@@ -100,7 +100,7 @@ const generatePointType = () => {
   return POINT_TYPES[randomIndex];
 };
 
-export const DESTINATIONS_LIST = destinations?.map(({name})=>name);
+export const DESTINATIONS_LIST = destinations?.map(({ name }) => name);
 
 export const generatePoint = () => {
   const date = getRandomDate();

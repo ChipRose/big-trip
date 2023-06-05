@@ -1,6 +1,6 @@
-import { ListView, EditPointView, PointView, ListEmpty, SortView } from '../view';
+import { ListView, FormPointView, PointView, ListEmpty, SortView } from '../view';
 import { OffersModel } from '../model';
-import { render } from '../framework/render.js';
+import { render, replace } from '../framework/render.js';
 
 export default class ListPresenter {
   #listContainer = null;
@@ -39,14 +39,14 @@ export default class ListPresenter {
   #renderPoint = ({ point }) => {
     const offersModel = new OffersModel({ pointType: point.type, offersChecked: point.offers });
     const pointComponent = new PointView({ point, offersModel });
-    const pointEditComponent = new EditPointView({ point, offersModel });
+    const pointEditComponent = new FormPointView({ point, offersModel });
 
     const replaceCardToForm = () => {
-      this.#listComponent.element.replaceChild(pointEditComponent.element, pointComponent.element);
+      replace(pointEditComponent, pointComponent);
     };
 
     const replaceFormToCard = () => {
-      this.#listComponent.element.replaceChild(pointComponent.element, pointEditComponent.element);
+      replace(pointComponent, pointEditComponent);
     };
 
     const onEscKeyDown = (evt) => {

@@ -1,4 +1,4 @@
-import { getRandomInteger } from '../util/util';
+import { getRandomInteger } from '../util/common-util';
 
 export const getAvailableOffersIdByType = (pointType) => {
   const offersByType = {

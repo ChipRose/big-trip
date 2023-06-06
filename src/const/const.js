@@ -6,4 +6,12 @@ const filterTypes = {
   PAST: 'past',
 };
 
-export { POINT_TYPES, filterTypes };
+const sortTypes = {
+  DAY: 'day',
+  EVENT: 'event',
+  TIME: 'time',
+  PRICE: 'price',
+  OFFERS: 'offers',
+};
+
+export { POINT_TYPES, filterTypes, sortTypes };

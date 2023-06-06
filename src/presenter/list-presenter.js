@@ -1,6 +1,7 @@
 import { ListView, FormPointView, PointView, ListEmpty, SortView } from '../view';
 import { OffersModel } from '../model';
 import { render, replace } from '../framework/render.js';
+import { generateSort } from '../mock/sorts';
 
 export default class ListPresenter {
   #listContainer = null;
@@ -27,7 +28,8 @@ export default class ListPresenter {
     if (!this.#listPoints?.length) {
       render(new ListEmpty(), this.#listContainer);
     } else {
-      render(new SortView(), this.#listContainer);
+      const sorts = generateSort(this.#pointsModel.points);
+      render(new SortView(sorts), this.#listContainer);
       render(this.#listComponent, this.#listContainer);
     }
 

@@ -13,7 +13,7 @@ const createListEmptyTemplate = () => {
 //     * Future — 'There are no future events now'.
 // -->
 
-export default class ListEmpty extends AbstractView {
+export default class ListEmptyView extends AbstractView {
   get template() {
     return createListEmptyTemplate();
   }

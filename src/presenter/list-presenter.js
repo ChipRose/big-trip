@@ -1,41 +1,38 @@
-import { ListView, FormPointView, PointView, ListEmpty, SortView } from '../view';
+import { ListView, FormPointView, PointView, ListEmptyView, SortView, BoardView } from '../view';
 import { OffersModel } from '../model';
-import { render, replace } from '../framework/render.js';
+import { render, RenderPosition, replace } from '../framework/render.js';
 import { generateSort } from '../mock/sorts';
 
 export default class ListPresenter {
-  #listContainer = null;
+  #boardContainer = null;
   #pointsModel = null;
 
+  #boardComponent = new BoardView();
   #listComponent = new ListView();
+  #emptyListComponent = new ListEmptyView();
 
   #listPoints = [];
   #listOffersByType = [];
+  #sorts = [];
 
-  constructor(listContainer, pointsModel) {
-    this.#listContainer = listContainer;
+  constructor(boardContainer, pointsModel) {
+    this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
+
+    this.#sorts = generateSort(this.#pointsModel.points);
   }
 
   init = () => {
     this.#listPoints = [...this.#pointsModel.points];
-    this.#renderList();
+    this.#renderBoard();
   }
 
-  #renderList = () => {
-    render(this.#listComponent, this.#listContainer);
+  #renderEmptyList = () => {
+    render(this.#emptyListComponent, this.#boardComponent.element, RenderPosition.BEFOREEND);
+  }
 
-    if (!this.#listPoints?.length) {
-      render(new ListEmpty(), this.#listContainer);
-    } else {
-      const sorts = generateSort(this.#pointsModel.points);
-      render(new SortView(sorts), this.#listContainer);
-      render(this.#listComponent, this.#listContainer);
-    }
-
-    for (let i = 0; i < this.#listPoints.length; i++) {
-      this.#renderPoint({ point: this.#listPoints[i], offersByType: this.#listOffersByType[i] });
-    }
+  #renderSort = () => {
+    render(new SortView(this.#sorts), this.#boardComponent.element, RenderPosition.BEFOREEND);
   }
 
   #renderPoint = ({ point }) => {
@@ -70,5 +67,27 @@ export default class ListPresenter {
     });
 
     render(pointComponent, this.#listComponent.element);
+  }
+
+  #renderPoints = () => {
+    this.#listPoints
+      .slice()
+      .forEach((point, index) => this.#renderPoint({ point, offersByType: this.#listOffersByType[index] }));
+  }
+
+  #renderList = () => {
+    render(this.#listComponent, this.#boardComponent.element, RenderPosition.BEFOREEND);
+    this.#renderPoints();
+  }
+
+  #renderBoard = () => {
+    render(this.#boardComponent, this.#boardContainer);
+
+    if (!this.#listPoints?.length) {
+      this.#renderEmptyList();
+      return;
+    } 
+    this.#renderSort();
+    this.#renderList();
   }
 }

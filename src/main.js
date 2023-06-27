@@ -6,9 +6,9 @@ import { generateFilters } from './mock/filters.js';
 
 const pageHeaderElement = document.querySelector('.page-header');
 const pageMainElement = document.querySelector('.page-main');
+const pageContentElement = pageMainElement.querySelector('.page-body__container');
 
 const pageFilterElement = pageHeaderElement.querySelector('.trip-controls__filters');
-const pageContentElement = pageMainElement.querySelector('.trip-events');
 
 const pointsModel = new PointsModel();
 const listPresenter = new ListPresenter(pageContentElement, pointsModel);

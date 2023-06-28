@@ -1,12 +1,12 @@
 const POINT_TYPES = ["taxi", "bus", "train", "ship", "drive", "flight", "check-in", "sightseeing", "restaurant"];
 
-const filterTypes = {
+const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PAST: 'past',
 };
 
-const sortTypes = {
+const SortType = {
   DAY: 'day',
   EVENT: 'event',
   TIME: 'time',
@@ -14,4 +14,9 @@ const sortTypes = {
   OFFERS: 'offers',
 };
 
-export { POINT_TYPES, filterTypes, sortTypes };
+const ModeType = {
+  DEFAULT: 'DEFAULT',
+  EDITING: 'EDITING'
+};
+
+export { POINT_TYPES, FilterType, SortType, ModeType };

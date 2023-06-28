@@ -1,3 +1,4 @@
+import {nanoid} from 'nanoid';
 import { getRandomInteger, getRandomDate } from '../util';
 import { getCheckedOffersIdByType } from '../mock/offers.js';
 import { POINT_TYPES } from '../const/const.js';
@@ -111,7 +112,7 @@ export const generatePoint = () => {
     dateFrom: date.dateFrom,
     dateTo: date.dateTo,
     destination: generateDestination(),
-    id: "0",
+    id: nanoid(),
     isFavorite: Boolean(getRandomInteger(0, 1)),
     offers: getCheckedOffersIdByType(type),
     type: type

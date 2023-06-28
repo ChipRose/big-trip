@@ -1,11 +1,11 @@
-import { sortTypes } from '../const/const';
+import { SortType } from '../const/const';
 
 const sort = {
-  [sortTypes.DAY]: (points) => [...points],
-  [sortTypes.EVENT]: (points) => [...points],
-  [sortTypes.TIME]: (points) => [...points],
-  [sortTypes.PRICE]: (points) => [...points],
-  [sortTypes.OFFERS]: (points) => [...points],
+  [SortType.DAY]: (points) => [...points],
+  [SortType.EVENT]: (points) => [...points],
+  [SortType.TIME]: (points) => [...points],
+  [SortType.PRICE]: (points) => [...points],
+  [SortType.OFFERS]: (points) => [...points],
 };
 
 export { sort };

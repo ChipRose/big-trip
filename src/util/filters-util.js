@@ -1,13 +1,13 @@
 import dayjs from 'dayjs';
-import { filterTypes } from '../const/const';
+import { FilterType } from '../const/const';
 
 const isPastEvent = (dueDate) => dueDate && dayjs().isAfter(dueDate, 'D');
 const isFutureEvent = (dueDate) => dueDate && !dayjs().isAfter(dueDate, 'D');
 
 const filter = {
-  [filterTypes.EVERYTHING]: (points) => [...points],
-  [filterTypes.FUTURE]: (points) => points.filter(({ dateFrom }) => isFutureEvent(dateFrom)),
-  [filterTypes.PAST]: (points) => points.filter(({ dateTo }) => isPastEvent(dateTo)),
+  [FilterType.EVERYTHING]: (points) => [...points],
+  [FilterType.FUTURE]: (points) => points.filter(({ dateFrom }) => isFutureEvent(dateFrom)),
+  [FilterType.PAST]: (points) => points.filter(({ dateTo }) => isPastEvent(dateTo)),
 };
 
 export { filter };

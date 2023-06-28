@@ -16,4 +16,17 @@ const getRandomDate = () => {
   return { dateFrom, dateTo };
 };
 
-export { getRandomInteger, getRandomDate };
+const updateItem = ({ items, update }) => {
+  const index = items.findIndex((item) => item.id === update.id);
+  const rezult = items.slice();
+
+  if (index === -1) {
+    return rezult;
+  }
+
+  rezult[index] = update;
+
+  return rezult;
+}
+
+export { getRandomInteger, getRandomDate, updateItem };

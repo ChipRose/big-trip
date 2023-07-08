@@ -36,10 +36,12 @@ export default class ListPresenter {
   }
 
   #sortPoints = (sortType) => {
-    this.#listPoints.sort(getSortCallBack(sortType));
-    this.#currentSortType = sortType;
-    remove(this.#sortComponent);
-    this.#renderSort();
+    if(typeof getSortCallBack(sortType) === 'function'){
+      this.#listPoints.sort(getSortCallBack(sortType));
+      this.#currentSortType = sortType;
+      remove(this.#sortComponent);
+      this.#renderSort();
+    }
   }
 
   #handlePointChange = (updatedPoint) => {

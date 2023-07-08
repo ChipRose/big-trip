@@ -39,19 +39,20 @@ const sortTimeDown = (pointA, pointB) => {
   return dayjs(pointBDiff).diff(dayjs(pointADiff));
 }
 
-const sortOffersUp = (pointA, pointB) => {
-  return pointA.offers.length - pointB.offers.length;
+const sortOffersDown = (pointA, pointB) => {
+  return pointB.offers.length - pointA.offers.length;
+}
+
+const SortProperties = {
+  [SortType.DAY]: { sortFunc: sortDateUp, isDisabled: false },
+  [SortType.PRICE]: { sortFunc: sortPriceDown, isDisabled: false },
+  [SortType.TIME]: { sortFunc: sortTimeDown, isDisabled: false },
+  [SortType.OFFERS]: { isDisabled: true },
+  [SortType.EVENT]: { isDisabled: true },
 }
 
 const getSortCallBack = (sortType) => {
-  const Sort = {
-    [SortType.DAY]: sortDateUp,
-    [SortType.PRICE]: sortPriceDown,
-    [SortType.TIME]: sortTimeDown,
-    [SortType.OFFERS]: sortOffersUp,
-  }
-
-  return Sort[sortType];
+  return SortProperties[sortType]?.sortFunc ? SortProperties[sortType]?.sortFunc : SortProperties[sortType]?.isDisabled;
 }
 
 export { sortDateUp, sortDateDown, getSortCallBack };

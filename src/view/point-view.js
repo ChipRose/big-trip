@@ -1,11 +1,11 @@
-import { formatDate, formatTime, getDurationTime } from '../util';
+import { formatDate, formatTime, formatDurationTime } from '../util';
 import AbstractView from '../framework/view/abstract-view.js';
 
 const createScheduleBlock = (point) => {
   const { dateFrom, dateTo } = point;
   const timeStart = formatTime(dateFrom);
   const timeEnd = formatTime(dateTo);
-  const timeDuration = getDurationTime({ dateFrom, dateTo });
+  const timeDuration = formatDurationTime({ dateFrom, dateTo });
 
   return (
     `<div class="event__schedule">

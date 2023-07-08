@@ -15,10 +15,10 @@ export default class PointPresenter {
   #point = null;
   #mode = ModeType.DEFAULT;
 
-  constructor({ listContainer, changeData, changeMode }) {
+  constructor({ listContainer, onDataChange, onModeChange }) {
     this.#listContainer = listContainer;
-    this.#changeData = changeData;
-    this.#changeMode = changeMode;
+    this.#changeData = onDataChange;
+    this.#changeMode = onModeChange;
   };
 
   init = (point) => {
@@ -31,9 +31,9 @@ export default class PointPresenter {
     this.#pointComponent = new PointView({ point, offersModel: this.#offersModel });
     this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel });
 
-    this.#pointComponent.setEditClickHandler(this.#editClickHandler);
-    this.#pointComponent.setFavoriteClickHandler(this.#favoriteClickHandler);
-    this.#pointEditComponent.setFormSubmitHandler(this.#submitFormHandler);
+    this.#pointComponent.setEditClickHandler(this.#handleEditClick);
+    this.#pointComponent.setFavoriteClickHandler(this.#handlefavoriteClick);
+    this.#pointEditComponent.setFormSubmitHandler(this.#handlerSubmitForm);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#listContainer);
@@ -83,15 +83,15 @@ export default class PointPresenter {
     }
   };
 
-  #editClickHandler = () => {
+  #handleEditClick = () => {
     this.#replaceCardToForm();
   };
 
-  #favoriteClickHandler = () => {
+  #handlefavoriteClick = () => {
     this.#changeData({ ...this.#point, isFavorite: !this.#point.isFavorite });
   }
 
-  #submitFormHandler = (point) => {
+  #handlerSubmitForm = (point) => {
     this.#changeData(point);
     this.#replaceFormToCard();
   };

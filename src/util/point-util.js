@@ -15,10 +15,15 @@ const formatDate = (date) => dayjs(date).format(dateFormat.DATE);
 const formatTime = (date) => dayjs(date).format(dateFormat.TIME);
 const formatDateTime = (date) => dayjs(date).format(dateFormat.DATE_TIME);
 
+
 const getDurationTime = ({ dateFrom, dateTo }) => {
   const dateStart = dayjs(dateFrom);
   const dateEnd = dayjs(dateTo);
-  const dayDuration = dayjs.duration(dateEnd.diff(dateStart));
+  return dayjs.duration(dateEnd.diff(dateStart));
+};
+
+const formatDurationTime = ({ dateFrom, dateTo }) => {
+  const dayDuration = getDurationTime({ dateFrom, dateTo });
   const days = dayDuration.get('days');
   if (days) return dayDuration.format(dateFormat.LONG_TIME);
   if (!days && dayDuration.get('hours')) return dayDuration.format(dateFormat.MIDDLE_TIME);
@@ -29,4 +34,4 @@ const isItemChecked = ({ id: _id, list }) => {
   return list?.find(({ id }) => id === _id) ? 'checked' : '';
 };
 
-export { formatDate, formatTime, formatDateTime, getDurationTime, isItemChecked };
+export { formatDate, formatTime, formatDateTime, getDurationTime, formatDurationTime, isItemChecked };

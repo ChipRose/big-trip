@@ -1,32 +1,48 @@
 import AbstractView from '../framework/view/abstract-view.js';
+import { SortType } from '../const/const.js';
 
-const createSortItem = ({ name: sortName = '', isChecked = false }) => {
+const createSortItem = ({ sortType = '', isChecked = false }) => {
   return (
-    `<div class="trip-sort__item  trip-sort__item--${sortName}">
-      <input id="sort-${sortName}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="sort-${sortName}" ${isChecked}>
-      <label class="trip-sort__btn" for="sort-${sortName}">${sortName}</label>
+    `<div class="trip-sort__item  trip-sort__item--${sortType}">
+      <input id="sort-${sortType}" class="trip-sort__input  visually-hidden" type="radio" name="trip-sort" value="${sortType}" ${isChecked}>
+      <label class="trip-sort__btn" for="sort-${sortType}">${sortType}</label>
     </div>`
   )
 };
 
-const createSortTemplate = (sorts = {}) => {
+const createSortTemplate = ({currentSortType}) => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
-      ${sorts?.map(({ name }, index) => (
-      createSortItem({ name, isChecked: index === 0 ? 'checked' : '' })
+      ${Object.values(SortType).map((type) => (
+      createSortItem({ sortType: type, isChecked: type === currentSortType ? 'checked' : '' })
     )).join('')}
     </form>`
   )
 };
 
 export default class SortView extends AbstractView {
-  #sorts = null;
-  constructor(sorts) {
+  #currentSortType = null;
+
+  constructor({currentSortType}) {
     super();
-    this.#sorts = sorts;
+    this.#currentSortType = currentSortType;
+  }
+  
+  get template() {
+    return createSortTemplate({currentSortType:this.#currentSortType});
+  }
+  
+  setSortTypeChangeHandler = (callback) => {
+    this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   }
 
-  get template() {
-    return createSortTemplate(this.#sorts);
+  #sortTypeChangeHandler = (evt) => {
+    if (evt.target.tagName !== 'INPUT') {
+      return;
+    }
+
+    evt.preventDefault();
+    this._callback.sortTypeChange(evt.target.value);
   }
 }

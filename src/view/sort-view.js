@@ -3,7 +3,7 @@ import { getSortCallBack } from '../util/';
 import { SortType } from '../const/const.js';
 
 const createSortItem = ({ sortType = '', isChecked = '' }) => {
-  const isDisabled = typeof getSortCallBack(sortType) === 'boolean' ? 'disabled' : '';
+  const isDisabled = getSortCallBack(sortType) ? '':'disabled';
   
   return (
     `<div class="trip-sort__item  trip-sort__item--${sortType}">

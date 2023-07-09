@@ -17,10 +17,10 @@ const getWeightForNullDate = (dateA, dateB) => {
   return null;
 };
 
-const sortDateUp = (pointA, pointB) => {
+const sortDateDown = (pointA, pointB) => {
   const weight = getWeightForNullDate(pointA.dateFrom, pointB.dateFrom);
 
-  return weight ?? dayjs(pointA.dateFrom).diff(dayjs(pointB.dateFrom));
+  return weight ?? dayjs(pointA.dateFrom).isBefore(dayjs(pointB.dateFrom)) ? -1 : 1;
 };
 
 const sortPriceDown = (pointA, pointB) => {
@@ -35,12 +35,12 @@ const sortTimeDown = (pointA, pointB) => {
 
 const getSortCallBack = (sortType) => {
   const SortProperties = {
-    [SortType.DAY]: sortDateUp,
+    [SortType.DAY]: sortDateDown,
     [SortType.PRICE]: sortPriceDown,
     [SortType.TIME]: sortTimeDown,
   };
 
   return SortProperties[sortType] ? SortProperties[sortType] : null;
-};
+}
 
 export { getSortCallBack };

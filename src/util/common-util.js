@@ -10,7 +10,7 @@ const getRandomInteger = (a = 0, b = 1) => {
 };
 
 const getRandomDate = () => {
-  const dateFrom = dayjs().set('d', getRandomInteger(0, 30)).set('M', getRandomInteger(1, 12)).set('h', getRandomInteger(0, 24)).set('m', getRandomInteger(0, 60));
+  const dateFrom = dayjs().set('d', getRandomInteger(0, 30)).set('M', getRandomInteger(0, 11)).set('h', getRandomInteger(0, 24)).set('m', getRandomInteger(0, 60));
   const dateTo = dayjs(dateFrom).add(getRandomInteger(0, 3), 'day').add(getRandomInteger(0, 24), 'hour').add(getRandomInteger(0, 60), 'minute');
 
   return { dateFrom, dateTo };

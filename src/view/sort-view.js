@@ -14,7 +14,6 @@ const createSortItem = ({ sortType = '', isChecked = '' }) => {
 };
 
 const createSortTemplate = ({ currentSortType }) => {
-  console.log(currentSortType)
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${Object.values(SortType).map((type) => (

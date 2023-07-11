@@ -1,5 +1,5 @@
-import { isItemChecked, formatDateTime } from '../util';
-import AbstractView from '../framework/view/abstract-view.js';
+import { isItemChecked, formatDateTime, getDestination } from '../util';
+import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
 
@@ -14,24 +14,32 @@ const BLANK_POINT = {
   isFavorite: false
 };
 
-const createEventChooseBlock = () => {
+const createEventChooseBlock = (state) => {
+  const { type } = state;
   return (`
-    <div class="event__type-list">
-      <fieldset class="event__type-group">
-        <legend class="visually-hidden">Event type</legend>
-        ${POINT_TYPES.map((type, index) => (`
-          <div class="event__type-item">
-            <input id="event-type-${type}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type}">
-            <label class="event__type-label  event__type-label--${type}" for="event-type-${type}-${index}">${type}</label>
-          </div>
-        `)).join('')}
-      </fieldset>
+    <div class="event__type-wrapper">
+      <label class="event__type  event__type-btn" for="event-type-toggle-1">
+        <span class="visually-hidden">Choose event type</span>
+        <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} type icon">
+      </label>
+      <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox" value="${type}">
+      <div class="event__type-list">
+        <fieldset class="event__type-group">
+          <legend class="visually-hidden">Event type</legend>
+          ${POINT_TYPES.map((pointType, index) => (`
+            <div class="event__type-item">
+              <input id="event-type-${pointType}-${index}" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${pointType}">
+              <label class="event__type-label  event__type-label--${pointType}" for="event-type-${pointType}-${index}">${pointType}</label>
+            </div>
+          `)).join('')}
+        </fieldset>
+      </div>
     </div>
   `)
 };
 
-const createTimeFieldBlock = (point) => {
-  const { dateFrom, dateTo, id } = point;
+const createTimeFieldBlock = (state) => {
+  const { dateFrom, dateTo, id } = state;
   const dateEnd = formatDateTime(dateTo);
   const dateStart = formatDateTime(dateFrom);
 
@@ -46,10 +54,8 @@ const createTimeFieldBlock = (point) => {
   `);
 };
 
-const createOffersBlock = ({ offersModel = null, point }) => {
-  const { type } = point;
-  const availableOffers = offersModel.offersAvailable;
-  const checkedOffers = offersModel.offersChecked;
+const createOffersBlock = (state) => {
+  const { type, availableOffers, checkedOffers } = state;
 
   return (
     availableOffers?.length ?
@@ -72,51 +78,43 @@ const createOffersBlock = ({ offersModel = null, point }) => {
   );
 };
 
-const createDistinationBlock = (point) => {
-  const { description = '', pictures = [] } = point.destination || {};
+const createDistinationBlock = (state) => {
+  const { description = '', pictures = [] } = state.destination || {};
 
   return (
-    point.destination ?
-      `<section class="event__section  event__section--destination">
-        <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-        <p class="event__destination-description">${description}</p>
-        <div class="event__photos-container">
-          <div class="event__photos-tape">
-            ${pictures?.length ? pictures.map(({ src, description }) => (`
-              <img class="event__photo" src=${src} alt=${description}>
-            `)).join('')
-        : ''}
-          </div>
+    `<section class="event__section  event__section--destination">
+      <h3 class="event__section-title  event__section-title--destination">Destination</h3>
+      <p class="event__destination-description">${description}</p>
+      <div class="event__photos-container">
+        <div class="event__photos-tape">
+          ${pictures?.length ? pictures.map(({ src, description }) => (`
+            <img class="event__photo" src=${src} alt=${description}>
+          `)).join('')
+      : ''}
         </div>
-      </section>`
-      : ''
+      </div>
+    </section>`
   );
 };
 
-const createFormPointTemplate = ({ point = BLANK_POINT, offersModel = null }) => {
+const createFormPointTemplate = (state = BLANK_POINT) => {
   const {
     basePrice,
     type,
-  } = point;
+    destination,
+    isDestinationExist,
+  } = state;
 
   return (
     `<li class="trip-events__item">
       <form class="event event--edit" action="#" method="post">
         <header class="event__header">
-          <div class="event__type-wrapper">
-            <label class="event__type  event__type-btn" for="event-type-toggle-1">
-              <span class="visually-hidden">Choose event type</span>
-              <img class="event__type-icon" width="17" height="17" src="img/icons/${type}.png" alt="${type} type icon">
-            </label>
-            <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
-            ${createEventChooseBlock()}
-          </div>
-
+          ${createEventChooseBlock(state)}
           <div class="event__field-group  event__field-group--destination">
             <label class="event__label  event__type-output" for="event-destination-1">
               ${type}
             </label>
-            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="Geneva" list="destination-list-1">
+            <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${isDestinationExist ? destination.name : ''}" list="destination-list-1">
             <datalist id="destination-list-1">
             ${DESTINATIONS_LIST.map((destination) => (`
               <option value="${destination}"></option>
@@ -124,7 +122,7 @@ const createFormPointTemplate = ({ point = BLANK_POINT, offersModel = null }) =>
             </datalist>
           </div>
 
-          ${createTimeFieldBlock(point)}
+          ${createTimeFieldBlock(state)}
 
           <div class="event__field-group  event__field-group--price">
             <label class="event__label" for="event-price-1">
@@ -138,26 +136,27 @@ const createFormPointTemplate = ({ point = BLANK_POINT, offersModel = null }) =>
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
-          ${createOffersBlock({ offersModel, point })}
-          ${createDistinationBlock(point)}
+          ${createOffersBlock(state)}
+          ${isDestinationExist ? createDistinationBlock(state) : ''}
         </section>
       </form>
     </li>`
   )
 };
 
-export default class FormPointView extends AbstractView {
-  #point = null;
+export default class FormPointView extends AbstractStatefullView {
   #offersModel = null;
 
   constructor({ point, offersModel }) {
     super();
-    this.#point = point;
     this.#offersModel = offersModel;
+    this._state = FormPointView.parsePointToState({ point, offersModel: this.#offersModel });
+
+    this.#setInnerHandlers();
   }
 
   get template() {
-    return createFormPointTemplate({ point: this.#point, offersModel: this.#offersModel });
+    return createFormPointTemplate(this._state);
   }
 
   setFormSubmitHandler = (callback) => {
@@ -167,6 +166,55 @@ export default class FormPointView extends AbstractView {
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
-    this._callback.formSubmit(this.#point);
+    this._callback.formSubmit(FormPointView.parseStateToPoint(this._state));
   }
+
+  #eventTypeToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      type: evt.target.value,
+      availableOffers: this.#offersModel.getAvailableOffers(evt.target.value),
+    });
+  }
+
+  #destinationToggleHandler = (evt) => {
+    evt.preventDefault();
+    this.updateElement({
+      destination: getDestination(evt.target.value),
+      isDestinationExist: evt.target.value ? true : false,
+    });
+  }
+
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  };
+
+  #setInnerHandlers = () =>{
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
+  };
+
+  static parsePointToState = ({ point, offersModel }) => {
+    return ({
+      ...point,
+      isDestinationExist: Boolean(point.destination),
+      availableOffers: offersModel.getAvailableOffers(point.type),
+      checkedOffers: point.offers?.length ? offersModel.offersChecked : []
+    })
+  };
+
+  static parseStateToPoint = (state) => {
+    const point = { ...state };
+
+    if (!state.isDestinationExist) {
+      point.destination = null;
+    }
+
+    delete point.isDestinationExist;
+    delete point.availableOffers;
+    delete point.checkedOffers;
+
+    return point;
+  };
 }

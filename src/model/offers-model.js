@@ -45,12 +45,9 @@ const offers = [
 ];
 
 export default class OffersModel {
-  #pointType = null;
   #offersChecked = [];
-  #offersByType = [];
 
-  constructor({ pointType = '', offersChecked = [] }) {
-    this.#pointType = pointType;
+  constructor(offersChecked) {
     this.#offersChecked = offersChecked;
   }
 
@@ -58,10 +55,9 @@ export default class OffersModel {
     return listId?.length ? offers.filter(({ id }) => listId?.includes(id)) : null;
   }
 
-  get offersAvailable() {
-    this.#offersByType = this.#getOffersList(getAvailableOffersIdByType(this.#pointType));
-
-    return this.#offersByType?.length ? this.#offersByType : null;
+  getAvailableOffers = (pointType) => {
+    const offersIdList = getAvailableOffersIdByType(pointType);
+    return offersIdList?.length ? offers.filter(({ id }) => offersIdList?.includes(id)) : null;
   }
 
   get offersChecked() {

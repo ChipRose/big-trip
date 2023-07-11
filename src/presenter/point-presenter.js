@@ -27,9 +27,9 @@ export default class PointPresenter {
     const prevPointComponent = this.#pointComponent;
     const prevPointEditComponent = this.#pointEditComponent;
 
-    this.#offersModel = new OffersModel({ pointType: point.type, offersChecked: point.offers });
+    this.#offersModel = new OffersModel(point.offers);
     this.#pointComponent = new PointView({ point, offersModel: this.#offersModel });
-    this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel });
+    this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel});
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handlefavoriteClick);

@@ -1,3 +1,4 @@
+import { destinations } from '../mock/point';
 import dayjs from 'dayjs';
 import duration from 'dayjs/plugin/duration'
 dayjs.extend(duration)
@@ -34,4 +35,8 @@ const isItemChecked = ({ id: _id, list }) => {
   return list?.find(({ id }) => id === _id) ? 'checked' : '';
 };
 
-export { formatDate, formatTime, formatDateTime, getDurationTime, formatDurationTime, isItemChecked };
+const getDestination = (destinationName) => (
+  destinations.find(({name})=>name===destinationName) ?? null
+);
+
+export { formatDate, formatTime, formatDateTime, getDurationTime, formatDurationTime, isItemChecked, getDestination };

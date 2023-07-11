@@ -3,7 +3,7 @@ import { getRandomInteger, getRandomDate } from '../util';
 import { getCheckedOffersIdByType } from '../mock/offers.js';
 import { POINT_TYPES } from '../const/const.js';
 
-const destinations = [
+export const destinations = [
   {
     description: "Chamonix, is a beautiful city, a true asian pearl, with crowded streets.",
     name: "Chamonix",

@@ -174,6 +174,7 @@ export default class FormPointView extends AbstractStatefullView {
     this.updateElement({
       type: evt.target.value,
       availableOffers: this.#offersModel.getAvailableOffers(evt.target.value),
+      checkedOffers:[]
     });
   }
 
@@ -200,7 +201,7 @@ export default class FormPointView extends AbstractStatefullView {
       ...point,
       isDestinationExist: Boolean(point.destination),
       availableOffers: offersModel.getAvailableOffers(point.type),
-      checkedOffers: point.offers?.length ? offersModel.offersChecked : []
+      checkedOffers: offersModel.offersChecked
     })
   };
 

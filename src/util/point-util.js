@@ -35,7 +35,7 @@ const isItemChecked = ({ id: _id, list }) => {
   return list?.find(({ id }) => id === _id) ? 'checked' : '';
 };
 
-const getDestination = (destinationName) => (
+const getDestination = (destinationName='') => (
   destinations.find(({name})=>name===destinationName) ?? null
 );
 

@@ -1,10 +1,12 @@
 import flatpickr from 'flatpickr';
 import rangePlugin from 'flatpickr/dist/plugins/rangePlugin';
-import '../../node_modules/flatpickr/dist/themes/material_blue.css';
 import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
 import { isItemChecked, formatDateTime, getDestination } from '../util';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
+
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/material_blue.css';
 
 const BLANK_POINT = {
   id: "0",
@@ -149,6 +151,7 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
 
 export default class FormPointView extends AbstractStatefullView {
   #offersModel = null;
+  #datepicker = null;
 
   constructor({ point, offersModel }) {
     super();
@@ -162,10 +165,36 @@ export default class FormPointView extends AbstractStatefullView {
     return createFormPointTemplate(this._state);
   };
 
+  removeElement = () => {
+    super.removeElement();
+
+    if (this.#datepicker) {
+      this.#datepicker.destroy();
+      this.#datepicker = null;
+    }
+  };
+
+  reset = (point) => {
+    this.updateElement(
+      FormPointView.parsePointToState(point)
+    );
+  };
+
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
   };
+
+  #setDatepicker = () => {
+    this.#datepicker = flatpickr(this.element.querySelector('#event-start-time'),
+      {
+        plugins: [new rangePlugin({ input: this.element.querySelector('#event-end-time') })],
+        onChange: this.#dateChangeHandler,
+        // defaultDate: [this._setState.dateFrom, this._setState.dateTo],
+        dateFormat: "d/m/y H:i",
+        theme: "material_blue"
+      })
+  }
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -189,36 +218,30 @@ export default class FormPointView extends AbstractStatefullView {
     });
   };
 
+  #dateChangeHandler = (selectedDates) => {
+    this.updateElement({
+      dateFrom: selectedDates[0],
+      dateTo: selectedDates[1]
+    });
+  }
+
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
   };
 
   #setInnerHandlers = () => {
-    const dateFromElement = this.element.querySelector('#event-start-time');
-    const dateToElement = this.element.querySelector('#event-end-time');
-    flatpickr(dateFromElement,
-      {
-        plugins: [new rangePlugin({ input: dateToElement })],
-        onChange: [(selectedDates) => {
-          this.updateElement({
-            dateFrom: selectedDates[0],
-            dateTo: selectedDates[1]
-          });
-        }],
-        dateFormat: "d/m/y H:i",
-        theme: "material_blue"
-      });
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
+    this.#setDatepicker();
   };
 
   static parsePointToState = ({ point, offersModel }) => {
     return ({
       ...point,
-      isDestinationExist: Boolean(point.destination),
-      availableOffers: offersModel.getAvailableOffers(point.type),
-      checkedOffers: offersModel.offersChecked
+      isDestinationExist: Boolean(point?.destination),
+      availableOffers: offersModel?.getAvailableOffers(point.type),
+      checkedOffers: offersModel?.offersChecked
     })
   };
 

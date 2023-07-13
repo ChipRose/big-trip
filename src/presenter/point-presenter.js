@@ -1,7 +1,7 @@
 import { render, replace, remove } from '../framework/render';
+import { ModeType } from '../const/const';
 import { OffersModel } from '../model';
 import { PointView, FormPointView } from '../view';
-import { ModeType } from '../const/const';
 
 export default class PointPresenter {
   #listContainer = null;
@@ -29,7 +29,7 @@ export default class PointPresenter {
 
     this.#offersModel = new OffersModel(point.offers);
     this.#pointComponent = new PointView({ point, offersModel: this.#offersModel });
-    this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel});
+    this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel });
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
     this.#pointComponent.setFavoriteClickHandler(this.#handlefavoriteClick);
@@ -85,6 +85,7 @@ export default class PointPresenter {
 
   #handleEditClick = () => {
     this.#replaceCardToForm();
+ 
   };
 
   #handlefavoriteClick = () => {

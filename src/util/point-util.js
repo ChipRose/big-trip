@@ -32,11 +32,11 @@ const formatDurationTime = ({ dateFrom, dateTo }) => {
 };
 
 const isItemChecked = ({ id: _id, list }) => {
-  return list?.find(({ id }) => id === _id) ? 'checked' : '';
+  return list?.find((id) => String(id) === String(_id)) ? 'checked' : '';
 };
 
-const getDestination = (destinationName='') => (
-  destinations.find(({name})=>name===destinationName) ?? null
+const getDestination = (destinationName = '') => (
+  destinations.find(({ name }) => name === destinationName) ?? null
 );
 
 export { formatDate, formatTime, formatDateTime, getDurationTime, formatDurationTime, isItemChecked, getDestination };

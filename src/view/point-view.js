@@ -19,8 +19,8 @@ const createScheduleBlock = (point) => {
   )
 };
 
-const createOffersListBlock = (offersModel = null) => {
-  const checkedOffers = offersModel.offersChecked;
+const createOffersListBlock = (checkedOffers) => {
+  console.log(checkedOffers)
 
   return (
     checkedOffers?.length ?
@@ -55,7 +55,7 @@ const createPointTemplate = ({ point = {}, offersModel = null }) => {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        ${createOffersListBlock(offersModel)}
+        ${createOffersListBlock(offersModel.getCheckedOffers(point.offers))}
         <button class="event__favorite-btn ${favoriteClassActive}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">

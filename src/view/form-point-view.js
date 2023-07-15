@@ -1,7 +1,7 @@
 import flatpickr from 'flatpickr';
 import rangePlugin from 'flatpickr/dist/plugins/rangePlugin';
 import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
-import { isItemChecked, formatDateTime, getDestination } from '../util';
+import { isItemChecked, getDestination } from '../util';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
 
@@ -45,22 +45,20 @@ const createEventChooseBlock = (state) => {
 
 const createTimeFieldBlock = (state) => {
   const { dateFrom, dateTo } = state;
-  const dateEnd = formatDateTime(dateTo);
-  const dateStart = formatDateTime(dateFrom);
 
   return (`
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time">From</label>
-      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value=${dateStart} >
+      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value="${dateFrom}" >
       &mdash;
       <label class="visually-hidden" for="event-end-time">To</label>
-      <input class="event__input  event__input--time" id="event-end-time" type="text" data-id="end" name="event-end-time" value=${dateEnd}>
+      <input class="event__input  event__input--time" id="event-end-time" type="text" data-id="end" name="event-end-time" value="${dateTo}" >
     </div>
   `);
 };
 
 const createOffersBlock = (state) => {
-  const { type, availableOffers, checkedOffers } = state;
+  const { type, availableOffers, offers } = state;
 
   return (
     availableOffers?.length ?
@@ -69,7 +67,7 @@ const createOffersBlock = (state) => {
         <div class="event__available-offers">
           ${availableOffers.map(({ title, price, id }) => (`
               <div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" type="checkbox" name="event-offer-${type}" ${isItemChecked({ id, list: checkedOffers })}>
+              <input class="event__offer-checkbox  visually-hidden" id="event-offer-${type}-${id}" data-offer-id="${id}" type="checkbox" name="event-offer-${type}" ${isItemChecked({ id, list: offers })}>
               <label class="event__offer-label" for="event-offer-${type}-${id}">
                 <span class="event__offer-title">${title}</span>
                 &plus;&euro;&nbsp;
@@ -152,6 +150,7 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
 export default class FormPointView extends AbstractStatefullView {
   #offersModel = null;
   #datepicker = null;
+  #offersList = [];
 
   constructor({ point, offersModel }) {
     super();
@@ -186,14 +185,16 @@ export default class FormPointView extends AbstractStatefullView {
   };
 
   #setDatepicker = () => {
-    this.#datepicker = flatpickr(this.element.querySelector('#event-start-time'),
+    this.#datepicker = flatpickr(
+      this.element.querySelector('#event-start-time'),
       {
         plugins: [new rangePlugin({ input: this.element.querySelector('#event-end-time') })],
         onChange: this.#dateChangeHandler,
-        // defaultDate: [this._setState.dateFrom, this._setState.dateTo],
         dateFormat: "d/m/y H:i",
+        enableTime: true,
         theme: "material_blue"
-      })
+      }
+    );
   }
 
   #formSubmitHandler = (evt) => {
@@ -206,7 +207,7 @@ export default class FormPointView extends AbstractStatefullView {
     this.updateElement({
       type: evt.target.value,
       availableOffers: this.#offersModel.getAvailableOffers(evt.target.value),
-      checkedOffers: []
+      offers: null
     });
   };
 
@@ -219,11 +220,21 @@ export default class FormPointView extends AbstractStatefullView {
   };
 
   #dateChangeHandler = (selectedDates) => {
-    this.updateElement({
+    this._setState({
       dateFrom: selectedDates[0],
       dateTo: selectedDates[1]
     });
-  }
+  };
+
+  #offersChangeHandler = (evt) => {
+    evt.preventDefault();
+    const offersElements = Array.from(this.element.querySelectorAll(".event__offer-checkbox"));
+    const checkedOffersElements = offersElements?.filter(({ checked }) => checked);
+    this.#offersList = checkedOffersElements?.length ? Array.from(checkedOffersElements, ({ dataset }) => dataset.offerId) : null;
+    this._setState({
+      offers: this.#offersList,
+    });
+  };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
@@ -233,6 +244,9 @@ export default class FormPointView extends AbstractStatefullView {
   #setInnerHandlers = () => {
     this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
     this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
+    if (this._state.availableOffers) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+    }
     this.#setDatepicker();
   };
 
@@ -241,7 +255,6 @@ export default class FormPointView extends AbstractStatefullView {
       ...point,
       isDestinationExist: Boolean(point?.destination),
       availableOffers: offersModel?.getAvailableOffers(point.type),
-      checkedOffers: offersModel?.offersChecked
     })
   };
 
@@ -252,13 +265,12 @@ export default class FormPointView extends AbstractStatefullView {
       point.destination = null;
     }
 
-    if (!state.checkedOffers) {
+    if (!state.offers?.length) {
       point.offers = null;
     }
 
     delete point.isDestinationExist;
     delete point.availableOffers;
-    delete point.checkedOffers;
 
     return point;
   };

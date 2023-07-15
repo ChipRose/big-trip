@@ -45,22 +45,15 @@ const offers = [
 ];
 
 export default class OffersModel {
-  #offersChecked = [];
-
-  constructor(offersChecked) {
-    this.#offersChecked = offersChecked;
-  }
-
-  #getOffersList = (listId) => {
-    return listId?.length ? offers.filter(({ id }) => listId?.includes(id)) : null;
-  }
+  #offers = offers.map((offer) => ({ ...offer, id: String(offer.id) }));
 
   getAvailableOffers = (pointType) => {
     const offersIdList = getAvailableOffersIdByType(pointType);
     return offersIdList?.length ? offers.filter(({ id }) => offersIdList?.includes(id)) : null;
-  }
+  };
 
-  get offersChecked() {
-    return this.#offersChecked?.length ? this.#getOffersList(this.#offersChecked) : null;
-  }
+  getCheckedOffers = (offersIdList) => {
+    const list = offersIdList.map((id) => String(id));
+    return offersIdList?.length ? this.#offers.filter(({ id }) => list?.includes(String(id))) : null;
+  };
 }

@@ -1,9 +1,10 @@
 import flatpickr from 'flatpickr';
 import rangePlugin from 'flatpickr/dist/plugins/rangePlugin';
 import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
-import { isItemChecked, getDestination } from '../util';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
+import { isItemChecked, getDestination } from '../util';
+import { formatDateTime } from '../util';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
@@ -11,8 +12,8 @@ import 'flatpickr/dist/themes/material_blue.css';
 const BLANK_POINT = {
   id: "0",
   basePrice: 0,
-  dateFrom: '0000-00-00T00:00:00.000Z',
-  dateTo: '0000-00-00T00:00:00.000Z',
+  dateFrom: "0000-01-01T00:00:00.000Z",
+  dateTo: "0000-01-01T00:00:00.000Z",
   destination: {},
   offers: [],
   type: 'drive',
@@ -45,14 +46,16 @@ const createEventChooseBlock = (state) => {
 
 const createTimeFieldBlock = (state) => {
   const { dateFrom, dateTo } = state;
+  const timeFrom = formatDateTime(dateFrom);
+  const timeTo = formatDateTime(dateTo);
 
   return (`
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time">From</label>
-      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value="${dateFrom}" >
+      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value="${dateFrom||''}" >
       &mdash;
       <label class="visually-hidden" for="event-end-time">To</label>
-      <input class="event__input  event__input--time" id="event-end-time" type="text" data-id="end" name="event-end-time" value="${dateTo}" >
+      <input class="event__input  event__input--time" id="event-end-time" type="text" data-id="end" name="event-end-time" value="${dateTo || ''}" >
     </div>
   `);
 };
@@ -106,7 +109,9 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
     type,
     destination,
     isDestinationExist,
+    isDateExist
   } = state;
+  const isFormSubmitDisabled = isDateExist ? '' : 'disabled';
 
   return (
     `<li class="trip-events__item">
@@ -135,7 +140,7 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
             <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value=${basePrice}>
           </div>
   
-          <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
+          <button class="event__save-btn  btn  btn--blue" type="submit" ${isFormSubmitDisabled}>Save</button>
           <button class="event__reset-btn" type="reset">Cancel</button>
         </header>
         <section class="event__details">
@@ -148,6 +153,7 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
 };
 
 export default class FormPointView extends AbstractStatefullView {
+  #point = null;
   #offersModel = null;
   #datepicker = null;
   #offersList = [];
@@ -155,6 +161,7 @@ export default class FormPointView extends AbstractStatefullView {
   constructor({ point, offersModel }) {
     super();
     this.#offersModel = offersModel;
+    this.#point = point;
     this._state = FormPointView.parsePointToState({ point, offersModel: this.#offersModel });
 
     this.#setInnerHandlers();
@@ -179,6 +186,11 @@ export default class FormPointView extends AbstractStatefullView {
     );
   };
 
+  _restoreHandlers = () => {
+    this.#setInnerHandlers();
+    this.setFormSubmitHandler(this._callback.formSubmit);
+  };
+
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
     this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
@@ -191,11 +203,25 @@ export default class FormPointView extends AbstractStatefullView {
         plugins: [new rangePlugin({ input: this.element.querySelector('#event-end-time') })],
         onChange: this.#dateChangeHandler,
         dateFormat: "d/m/y H:i",
+        // dateDefalt: [this.#point.dateFrom, this.#point.dateTo],
         enableTime: true,
         theme: "material_blue"
       }
     );
-  }
+  };
+
+  #setOfferChange = () => {
+    if (this._state.availableOffers) {
+      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+    }
+  };
+
+  #setInnerHandlers = () => {
+    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
+    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
+    this.#setOfferChange();
+    this.#setDatepicker();
+  };
 
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
@@ -220,9 +246,10 @@ export default class FormPointView extends AbstractStatefullView {
   };
 
   #dateChangeHandler = (selectedDates) => {
-    this._setState({
-      dateFrom: selectedDates[0],
-      dateTo: selectedDates[1]
+    this.updateElement({
+      dateFrom: selectedDates[0]||null,
+      dateTo: selectedDates[1]||null,
+      isDateExist: Boolean(selectedDates[0] && selectedDates[1])
     });
   };
 
@@ -236,25 +263,12 @@ export default class FormPointView extends AbstractStatefullView {
     });
   };
 
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-    this.setFormSubmitHandler(this._callback.formSubmit);
-  };
-
-  #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
-    if (this._state.availableOffers) {
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
-    }
-    this.#setDatepicker();
-  };
-
   static parsePointToState = ({ point, offersModel }) => {
     return ({
       ...point,
       isDestinationExist: Boolean(point?.destination),
       availableOffers: offersModel?.getAvailableOffers(point.type),
+      isDateExist: Boolean(point?.dateFrom && point?.dateTo)
     })
   };
 
@@ -271,6 +285,7 @@ export default class FormPointView extends AbstractStatefullView {
 
     delete point.isDestinationExist;
     delete point.availableOffers;
+    delete point.isDateExist;
 
     return point;
   };

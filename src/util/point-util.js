@@ -12,9 +12,9 @@ const dateFormat = {
   SHORT_TIME: 'mm[M]'
 };
 
-const formatDate = (date) => dayjs(date).format(dateFormat.DATE);
-const formatTime = (date) => dayjs(date).format(dateFormat.TIME);
-const formatDateTime = (date) => dayjs(date).format(dateFormat.DATE_TIME);
+const formatDate = (date) => dayjs(date).format(dateFormat.DATE) || '';
+const formatTime = (date) => dayjs(date).format(dateFormat.TIME) || '';
+const formatDateTime = (date) => dayjs(date).format(dateFormat.DATE_TIME) || '';
 
 
 const getDurationTime = ({ dateFrom, dateTo }) => {

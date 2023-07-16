@@ -53,7 +53,7 @@ export default class OffersModel {
   };
 
   getCheckedOffers = (offersIdList) => {
-    const list = offersIdList.map((id) => String(id));
+    const list = offersIdList?.map((id) => String(id));
     return offersIdList?.length ? this.#offers.filter(({ id }) => list?.includes(String(id))) : null;
   };
 }

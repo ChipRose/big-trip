@@ -1,5 +1,5 @@
-import { formatDate, formatTime, formatDurationTime } from '../util';
 import AbstractView from '../framework/view/abstract-view.js';
+import { formatDate, formatTime, formatDurationTime } from '../util';
 
 const createScheduleBlock = (point) => {
   const { dateFrom, dateTo } = point;
@@ -20,7 +20,6 @@ const createScheduleBlock = (point) => {
 };
 
 const createOffersListBlock = (checkedOffers) => {
-  console.log(checkedOffers)
 
   return (
     checkedOffers?.length ?
@@ -41,6 +40,7 @@ const createPointTemplate = ({ point = {}, offersModel = null }) => {
   const dateStart = formatDate(dateFrom);
   const title = `${type}${destination ? ` ${destination.name}` : ''}`;
   const favoriteClassActive = isFavorite ? 'event__favorite-btn--active' : '';
+  const checkedOffers = offersModel.getCheckedOffers(point.offers);
 
   return (`
     <li class="trip-events__item">
@@ -55,7 +55,7 @@ const createPointTemplate = ({ point = {}, offersModel = null }) => {
           &euro;&nbsp;<span class="event__price-value">${basePrice}</span>
         </p>
         <h4 class="visually-hidden">Offers:</h4>
-        ${createOffersListBlock(offersModel.getCheckedOffers(point.offers))}
+        ${createOffersListBlock(checkedOffers)}
         <button class="event__favorite-btn ${favoriteClassActive}" type="button">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -89,12 +89,12 @@ export default class PointView extends AbstractView {
     this.element.querySelector('.event__rollup-btn').addEventListener('click', this.#editClickHandler);
   }
 
-  setFavoriteClickHandler = (callback) =>{
+  setFavoriteClickHandler = (callback) => {
     this._callback.favoriteClick = callback;
     this.element.querySelector('.event__favorite-btn').addEventListener('click', this.#favoriteClickHandler);
   }
 
-  #favoriteClickHandler = (evt) =>{
+  #favoriteClickHandler = (evt) => {
     evt.preventDefault();
     this._callback.favoriteClick();
   }

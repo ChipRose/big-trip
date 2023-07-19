@@ -19,7 +19,7 @@ export default class PointPresenter {
     this.#listContainer = listContainer;
     this.#changeData = onDataChange;
     this.#changeMode = onModeChange;
-  };
+  }
 
   init = (point) => {
     this.#point = point;
@@ -55,14 +55,14 @@ export default class PointPresenter {
   destroy = () => {
     remove(this.#pointComponent);
     remove(this.#pointEditComponent);
-  }
+  };
 
   resetView = () => {
     if (this.#mode !== ModeType.DEFAULT) {
       this.#pointEditComponent.reset(this.#point);
       this.#replaceFormToCard();
     }
-  }
+  };
 
   #replaceCardToForm = () => {
     replace(this.#pointEditComponent, this.#pointComponent);
@@ -97,4 +97,4 @@ export default class PointPresenter {
     this.#changeData(point);
     this.#replaceFormToCard();
   };
-};
+}

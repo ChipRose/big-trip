@@ -4,7 +4,6 @@ import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
 import { POINT_TYPES } from '../const/const.js';
 import { DESTINATIONS_LIST } from '../mock/point.js';
 import { isItemChecked, getDestination } from '../util';
-import { formatDateTime } from '../util';
 
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/material_blue.css';
@@ -46,13 +45,11 @@ const createEventChooseBlock = (state) => {
 
 const createTimeFieldBlock = (state) => {
   const { dateFrom, dateTo } = state;
-  const timeFrom = formatDateTime(dateFrom);
-  const timeTo = formatDateTime(dateTo);
 
   return (`
     <div class="event__field-group  event__field-group--time">
       <label class="visually-hidden" for="event-start-time">From</label>
-      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value="${dateFrom||''}" >
+      <input class="event__input  event__input--time" id="event-start-time" data-id="start" type="text" name="event-start-time" value="${dateFrom || ''}" >
       &mdash;
       <label class="visually-hidden" for="event-end-time">To</label>
       <input class="event__input  event__input--time" id="event-end-time" type="text" data-id="end" name="event-end-time" value="${dateTo || ''}" >
@@ -165,11 +162,11 @@ export default class FormPointView extends AbstractStatefullView {
     this._state = FormPointView.parsePointToState({ point, offersModel: this.#offersModel });
 
     this.#setInnerHandlers();
-  };
+  }
 
   get template() {
     return createFormPointTemplate(this._state);
-  };
+  }
 
   removeElement = () => {
     super.removeElement();
@@ -247,8 +244,8 @@ export default class FormPointView extends AbstractStatefullView {
 
   #dateChangeHandler = (selectedDates) => {
     this.updateElement({
-      dateFrom: selectedDates[0]||null,
-      dateTo: selectedDates[1]||null,
+      dateFrom: selectedDates[0] || null,
+      dateTo: selectedDates[1] || null,
       isDateExist: Boolean(selectedDates[0] && selectedDates[1])
     });
   };

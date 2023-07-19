@@ -33,7 +33,7 @@ const sortTimeDown = (pointA, pointB) => {
   return dayjs(pointBDiff).diff(dayjs(pointADiff));
 };
 
-const getSortCallBack = (sortType) => {
+const getSortCallback = (sortType) => {
   const SortProperties = {
     [SortType.DAY]: sortDateDown,
     [SortType.PRICE]: sortPriceDown,
@@ -43,4 +43,4 @@ const getSortCallBack = (sortType) => {
   return SortProperties[sortType] ? SortProperties[sortType] : null;
 }
 
-export { getSortCallBack };
+export { getSortCallback };

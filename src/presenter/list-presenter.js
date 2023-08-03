@@ -1,5 +1,5 @@
-import { render, RenderPosition } from '../framework/render.js';
-import { SortType } from '../const/const.js';
+import { render, RenderPosition, remove } from '../framework/render.js';
+import { SortType, UpdateType, UserAction } from '../const/const.js';
 import { getSortCallback } from '../util';
 import { ListView, ListEmptyView, SortView, BoardView } from '../view';
 import { PointPresenter } from '../presenter';
@@ -16,9 +16,11 @@ export default class ListPresenter {
   #listComponent = new ListView();
   #emptyListComponent = new ListEmptyView();
 
-  constructor(boardContainer, pointsModel) {
+  constructor({ boardContainer, pointsModel }) {
     this.#boardContainer = boardContainer;
     this.#pointsModel = pointsModel;
+
+    this.#pointsModel.addObserver(this.#handleModelEvent);
   }
 
   get points() {
@@ -29,13 +31,48 @@ export default class ListPresenter {
     this.#renderBoard();
   };
 
-  #clearList = () => {
+  #clearBoard = ({ resetSortType = false } = {}) => {
     this.#pointPresenter.forEach((presenter) => presenter.destroy());
     this.#pointPresenter.clear();
+
+    remove(this.#sortComponent);
+    remove(this.#emptyListComponent);
+
+    if (resetSortType) {
+      this.#currentSortType = SortType.DAY;
+    }
   };
 
-  #handlePointChange = (updatedPoint) => {
-    this.#pointPresenter.get(updatedPoint.id).init(updatedPoint);
+  #handleModelEvent = (updateType, data) => {
+    console.log({ updateType, data });
+    switch (updateType) {
+      case UpdateType.PATCH:
+        this.#pointPresenter.get(data.id).init(data);
+        break;
+      case UpdateType.MINOR:
+        this.#clearBoard();
+        this.#renderBoard();
+        break;
+      case UpdateType.MAJOR:
+        this.#clearBoard({ resetSortType: true });
+        this.#renderBoard();
+        break;
+    }
+  };
+
+  #handleViewAction = (actionType, updateType, update) => {
+    console.log({ updateType, update });
+    switch (actionType) {
+      case UserAction.UPDATE_POINT:
+        this.#pointsModel.updatePoint(updateType, update);
+        break;
+      case UserAction.ADD_POINT:
+        this.#pointsModel.addPoint(updateType, update);
+        break;
+      case UserAction.DELETE_POINT:
+        this.#pointsModel.deletePoint(updateType, update);
+        break;
+    };
   };
 
   #handleModeChange = () => {
@@ -48,12 +85,12 @@ export default class ListPresenter {
     }
 
     this.#currentSortType = sortType;
-    this.#clearList();
-    this.#renderList();
+    this.#clearBoard();
+    this.#renderBoard();
   };
 
   #renderSort = () => {
-    this.#sortComponent = new SortView();
+    this.#sortComponent = new SortView(this.#currentSortType);
     render(this.#sortComponent, this.#boardComponent.element, RenderPosition.BEFOREEND);
     this.#sortComponent.setSortTypeChangeHandler(this.#handleSortTypeChange);
   };
@@ -63,7 +100,7 @@ export default class ListPresenter {
   };
 
   #renderPoint = (point) => {
-    const pointPresenter = new PointPresenter({ listContainer: this.#listComponent.element, onDataChange: this.#handlePointChange, onModeChange: this.#handleModeChange });
+    const pointPresenter = new PointPresenter({ listContainer: this.#listComponent.element, onDataChange: this.#handleViewAction, onModeChange: this.#handleModeChange });
     pointPresenter.init(point);
     this.#pointPresenter.set(point.id, pointPresenter);
   };
@@ -72,19 +109,20 @@ export default class ListPresenter {
     points.forEach((point) => this.#renderPoint(point));
   };
 
-  #renderList = () => {
-    render(this.#listComponent, this.#boardComponent.element, RenderPosition.BEFOREEND);
-    this.#renderPoints(this.points);
-  };
-
   #renderBoard = () => {
+    const points = this.points;
+    const pointsCount = points?.length;
+
     render(this.#boardComponent, this.#boardContainer);
 
-    if (!this.points?.length) {
+    if (!pointsCount) {
       this.#renderEmptyList();
       return;
     }
+
     this.#renderSort();
-    this.#renderList();
+
+    render(this.#listComponent, this.#boardComponent.element, RenderPosition.BEFOREEND);
+    this.#renderPoints(this.points);
   };
 }

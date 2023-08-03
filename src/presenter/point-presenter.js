@@ -1,5 +1,5 @@
 import { render, replace, remove } from '../framework/render';
-import { ModeType } from '../const/const';
+import { ModeType, UpdateType, UserAction } from '../const/const';
 import { OffersModel } from '../model';
 import { PointView, FormPointView } from '../view';
 
@@ -28,12 +28,13 @@ export default class PointPresenter {
     const prevPointEditComponent = this.#pointEditComponent;
 
     this.#offersModel = new OffersModel();
-    this.#pointComponent = new PointView({ point, offersModel: this.#offersModel });
-    this.#pointEditComponent = new FormPointView({ point, offersModel: this.#offersModel });
+    this.#pointComponent = new PointView({ point: this.#point, offersModel: this.#offersModel });
+    this.#pointEditComponent = new FormPointView({ point: this.#point, offersModel: this.#offersModel });
 
     this.#pointComponent.setEditClickHandler(this.#handleEditClick);
-    this.#pointComponent.setFavoriteClickHandler(this.#handlefavoriteClick);
-    this.#pointEditComponent.setFormSubmitHandler(this.#handlerSubmitForm);
+    this.#pointComponent.setFavoriteClickHandler(this.#handleFavoriteClick);
+    this.#pointEditComponent.setFormSubmitHandler(this.#handleSubmitForm);
+    this.#pointEditComponent.setDeleteClickHandler(this.#handleDeleteClick);
 
     if (prevPointComponent === null || prevPointEditComponent === null) {
       render(this.#pointComponent, this.#listContainer);
@@ -89,12 +90,30 @@ export default class PointPresenter {
     this.#replaceCardToForm();
   };
 
-  #handlefavoriteClick = () => {
-    this.#changeData({ ...this.#point, isFavorite: !this.#point.isFavorite });
+  #handleFavoriteClick = () => {
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      UpdateType.MINOR,
+      { ...this.#point, isFavorite: !this.#point.isFavorite }
+    );
   }
 
-  #handlerSubmitForm = (point) => {
-    this.#changeData(point);
+  #handleSubmitForm = (update) => {
+    const isMinorUpdate = this.#point.offers?.length !== update.offers?.length || this.#point.destination !== update.destination || this.#point.isFavorite !== update.isFavorite|| this.#point.type !== update.type;
+    
+    this.#changeData(
+      UserAction.UPDATE_POINT,
+      isMinorUpdate ? UpdateType.MINOR : UpdateType.PATCH,
+      update
+    );
     this.#replaceFormToCard();
+  };
+
+  #handleDeleteClick = (point) => {
+    this.#changeData(
+      UserAction.DELETE_POINT,
+      UpdateType.MINOR,
+      point
+    )
   };
 }

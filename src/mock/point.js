@@ -9,19 +9,19 @@ export const destinations = [
     name: "Chamonix",
     pictures: [
       {
-        src: `http://placeimg.com/300/200/nature`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Chamonix parliament building"
       },
       {
-        src: `http://placeimg.com/300/200/nature`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Chamonix parliament building"
       },
       {
-        src: `http://placeimg.com/300/200/nature`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Chamonix parliament building"
       },
       {
-        src: `http://placeimg.com/300/200/nature`,
+        src: `http://via.placeholder.com/300x200`,
         description: "Chamonix parliament building"
       },
     ]

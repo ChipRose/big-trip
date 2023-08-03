@@ -1,6 +1,6 @@
-import AbstractStatefullView from '../framework/view/abstract-stateful-view.js';
+import AbstractView from '../framework/view/abstract-view.js';
 import { SortType } from '../const/const.js';
-import { getSortCallback } from '../util/sorts-utils.js';
+import { getSortCallback } from '../util/';
 
 const createSortItem = ({ sortType = '', isChecked = '' }) => {
   const isDisabled = getSortCallback(sortType) ? '' : 'disabled';
@@ -13,9 +13,7 @@ const createSortItem = ({ sortType = '', isChecked = '' }) => {
   )
 };
 
-const createSortTemplate = (state) => {
-  const { currentSortType } = state;
-
+const createSortTemplate = (currentSortType) => {
   return (
     `<form class="trip-events__trip-sort  trip-sort" action="#" method="get">
       ${Object.values(SortType).map((type) => (
@@ -25,31 +23,22 @@ const createSortTemplate = (state) => {
   )
 };
 
-export default class SortView extends AbstractStatefullView {
-  #currentSortType = SortType.DAY;
+export default class SortView extends AbstractView {
+  #currentSortType = null;
 
-  constructor() {
+  constructor(currentSortType) {
     super();
 
-    this._state = SortView.getState({ currentSortType: this.#currentSortType });
-    this.#setInnerHandlers();
+    this.#currentSortType = currentSortType;
   }
 
   get template() {
-    return createSortTemplate(this._state);
+    return createSortTemplate(this.#currentSortType);
   }
-
-  _restoreHandlers = () => {
-    this.#setInnerHandlers();
-    this.setSortTypeChangeHandler(this._callback.sortTypeChange);
-  };
-
-  #setInnerHandlers = () => {
-    this.element.addEventListener('click', this.#sortTypeChangeHandler);
-  };
 
   setSortTypeChangeHandler = (callback) => {
     this._callback.sortTypeChange = callback;
+    this.element.addEventListener('click', this.#sortTypeChangeHandler);
   };
 
   #sortTypeChangeHandler = (evt) => {
@@ -60,12 +49,5 @@ export default class SortView extends AbstractStatefullView {
     evt.preventDefault();
     this.#currentSortType = evt.target.value;
     this._callback.sortTypeChange(evt.target.value);
-    this.updateElement({ currentSortType: this.#currentSortType });
-  };
-
-  static getState = ({ currentSortType }) => {
-    return ({
-      currentSortType
-    })
   };
 }

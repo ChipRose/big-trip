@@ -138,8 +138,8 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
           </div>
   
           <button class="event__save-btn  btn  btn--blue" type="submit" ${isFormSubmitDisabled}>Save</button>
-          <button class="event__reset-btn" type="reset">Cancel</button>
-        </header>
+          <button class="event__reset-btn" type="reset">Delete</button>
+          </header>
         <section class="event__details">
           ${createOffersBlock(state)}
           ${isDestinationExist ? createDistinationBlock(state) : ''}
@@ -149,9 +149,20 @@ const createFormPointTemplate = (state = BLANK_POINT) => {
   )
 };
 
+const Selector = {
+  EVENT_TYPE_GROUP: '.event__type-group',
+  EVENT_DESTINATION_INPUT: '.event__input--destination',
+  AVAILABLE_OFFERS_GROUP: '.event__available-offers',
+  OFFER_CHECKBOX: '.event__offer-checkbox',
+  FORM: 'form',
+  DELETE_BTN: '.event__reset-btn',
+  START_TIME: '#event-start-time',
+  END_TIME: '#event-end-time'
+}
+
 export default class FormPointView extends AbstractStatefullView {
-  #point = null;
   #offersModel = null;
+  #point = null;
   #datepicker = null;
   #offersList = [];
 
@@ -159,7 +170,7 @@ export default class FormPointView extends AbstractStatefullView {
     super();
     this.#offersModel = offersModel;
     this.#point = point;
-    this._state = FormPointView.parsePointToState({ point, offersModel: this.#offersModel });
+    this._state = FormPointView.parsePointToState({ point: this.#point, offersModel: this.#offersModel });
 
     this.#setInnerHandlers();
   }
@@ -179,25 +190,31 @@ export default class FormPointView extends AbstractStatefullView {
 
   reset = (point) => {
     this.updateElement(
-      FormPointView.parsePointToState(point)
+      FormPointView.parsePointToState({ point, offersModel: this.#offersModel })
     );
   };
 
   _restoreHandlers = () => {
     this.#setInnerHandlers();
     this.setFormSubmitHandler(this._callback.formSubmit);
+    this.setDeleteClickHandler(this._callback.deleteClick);
   };
 
   setFormSubmitHandler = (callback) => {
     this._callback.formSubmit = callback;
-    this.element.querySelector('form').addEventListener('submit', this.#formSubmitHandler);
+    this.element.querySelector(Selector.FORM).addEventListener('submit', this.#formSubmitHandler);
   };
+
+  setDeleteClickHandler = (callback) => {
+    this._callback.deleteClick = callback;
+    this.element.querySelector(Selector.DELETE_BTN).addEventListener('click', this.#pointDeleteHandler);
+  }
 
   #setDatepicker = () => {
     this.#datepicker = flatpickr(
-      this.element.querySelector('#event-start-time'),
+      this.element.querySelector(Selector.START_TIME),
       {
-        plugins: [new rangePlugin({ input: this.element.querySelector('#event-end-time') })],
+        plugins: [new rangePlugin({ input: this.element.querySelector(Selector.END_TIME) })],
         onChange: this.#dateChangeHandler,
         dateFormat: "d/m/y H:i",
         // dateDefalt: [this.#point.dateFrom, this.#point.dateTo],
@@ -209,13 +226,13 @@ export default class FormPointView extends AbstractStatefullView {
 
   #setOfferChange = () => {
     if (this._state.availableOffers) {
-      this.element.querySelector('.event__available-offers').addEventListener('change', this.#offersChangeHandler);
+      this.element.querySelector(Selector.AVAILABLE_OFFERS_GROUP).addEventListener('change', this.#offersChangeHandler);
     }
   };
 
   #setInnerHandlers = () => {
-    this.element.querySelector('.event__type-group').addEventListener('change', this.#eventTypeToggleHandler);
-    this.element.querySelector('.event__input--destination').addEventListener('change', this.#destinationToggleHandler);
+    this.element.querySelector(Selector.EVENT_TYPE_GROUP).addEventListener('change', this.#eventTypeToggleHandler);
+    this.element.querySelector(Selector.EVENT_DESTINATION_INPUT).addEventListener('change', this.#destinationToggleHandler);
     this.#setOfferChange();
     this.#setDatepicker();
   };
@@ -223,6 +240,11 @@ export default class FormPointView extends AbstractStatefullView {
   #formSubmitHandler = (evt) => {
     evt.preventDefault();
     this._callback.formSubmit(FormPointView.parseStateToPoint(this._state));
+  };
+
+  #pointDeleteHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.deleteClick(FormPointView.parseStateToPoint(this._state));
   };
 
   #eventTypeToggleHandler = (evt) => {
@@ -252,7 +274,7 @@ export default class FormPointView extends AbstractStatefullView {
 
   #offersChangeHandler = (evt) => {
     evt.preventDefault();
-    const offersElements = Array.from(this.element.querySelectorAll(".event__offer-checkbox"));
+    const offersElements = Array.from(this.element.querySelectorAll(Selector.OFFER_CHECKBOX));
     const checkedOffersElements = offersElements?.filter(({ checked }) => checked);
     this.#offersList = checkedOffersElements?.length ? Array.from(checkedOffersElements, ({ dataset }) => dataset.offerId) : null;
     this._setState({

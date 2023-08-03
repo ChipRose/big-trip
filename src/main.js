@@ -11,7 +11,7 @@ const pageContentElement = pageMainElement.querySelector('.page-body__container'
 const pageFilterElement = pageHeaderElement.querySelector('.trip-controls__filters');
 
 const pointsModel = new PointsModel();
-const listPresenter = new ListPresenter(pageContentElement, pointsModel);
+const listPresenter = new ListPresenter({ boardContainer: pageContentElement, pointsModel });
 
 const filters = generateFilters(pointsModel.points);
 
